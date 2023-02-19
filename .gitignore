@@ -2,7 +2,8 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-
+.kra
+.psd
 # Never ignore Asset meta data
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
