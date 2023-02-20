@@ -12,6 +12,10 @@ class Orochi : Charecter
 
     }
 
+    public Orochi(bool assign) : base(assign)
+    {
+
+    }
     protected override void Initalize()
     {
         idle = new AnimationSprite("Assets/Charecter 1/C1 Idle.png", 2, 1, 2, false, false);

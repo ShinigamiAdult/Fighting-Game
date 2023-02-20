@@ -48,9 +48,35 @@ public class Charecter : AnimationSprite
     protected AttackClass UltimateAttack;
 
     protected AttackClass CurrentAttack;
-    public Charecter(TiledObject obj = null) : base("Assets/Test Animations/Chare.png", 1, 1)
+    public Charecter(TiledObject obj = null) : base("Assets/Test Animations/Chare.png", 1, 1,-1)
     {
         bool assign = obj.GetBoolProperty("Input", true);
+        if (assign)
+            ((MyGame)game).controller1.ControllerInput1 += AddInput;
+        else
+            ((MyGame)game).controller2.ControllerInput2 += AddInput;
+        for (int i = 0; i < 10; i++)
+        {
+            AddInput(0);
+        }
+        SetOrigin(width / 2, height / 2);
+        alpha = 0;
+
+        Initalize();
+        CurrentAttack = LightPunch;
+        playerColl = new PlayerColl();
+        playerColl.visible = true;
+        playerColl.SetScaleXY(2f, 5.5f);
+        playerColl.SetXY(0, 0f);
+        AddChild(playerColl);
+
+        hurtBox = new HurtBox();
+        hurtBox.visible = true;
+        BaseHurtBox();
+        AddChild(hurtBox);
+    }
+    public Charecter(bool assign) : base("Assets/Test Animations/Chare.png", 1, 1,-1)
+    {
         if (assign)
             ((MyGame)game).controller1.ControllerInput1 += AddInput;
         else

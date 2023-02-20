@@ -4,6 +4,7 @@ using System.Drawing;                           // System.Drawing contains drawi
 using System.Collections.Generic;
 public class MyGame : Game
 {
+    public CharacterSelectLevel CharecterSelect;
     public GameLevel GameLevel;
     public Controller1 controller1;
     public Controller2 controller2;
@@ -16,20 +17,30 @@ public class MyGame : Game
         controller2 = new Controller2();
         AddChild(controller2);
 
-        LoadLevel("TestMap.tmx");
+        //LoadGameLevel("TestMap.tmx");
+        LoadCharecterSelect("CharecterSelect.tmx");
     }
 
-    public void LoadLevel(string filename)
+    public void LoadGameLevel(string filename)
     {
+        int char1 = CharecterSelect.manager.GetIndex1();
+        int char2 = CharecterSelect.manager.GetIndex2();
+        CharecterSelect.Destroy();
         if (GameLevel != null)
             GameLevel.Destroy();
-        GameLevel = new GameLevel(filename);
+        GameLevel = new GameLevel(filename,char1,char2);
         AddChild(GameLevel);
     }
-
+    public void LoadCharecterSelect(string filename)
+    {
+        if (CharecterSelect != null)
+            CharecterSelect.Destroy();
+        CharecterSelect = new CharacterSelectLevel(filename);
+        AddChild(CharecterSelect);
+    }
     public void LoadCurrentLevel()
     {
-        LoadLevel(GameLevel.currentlevelName);
+        LoadGameLevel(GameLevel.currentlevelName);
     }
 
     void Update()

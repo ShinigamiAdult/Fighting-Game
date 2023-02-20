@@ -7,6 +7,7 @@ using TiledMapParser;
 public class Controller2 : Controller
 {
     public event Action<int> ControllerInput2;
+    public event Action<int> SecondaryControllerInput2;
     public override void CotrollerInputs()
     {
         if (Input.GetKeyUp(Key.LEFT) || Input.GetKeyUp(Key.RIGHT) || Input.GetKeyUp(Key.DOWN) || Input.GetKeyUp(Key.UP))
@@ -59,12 +60,28 @@ public class Controller2 : Controller
         //HK
         if (Input.GetKeyDown(Key.L))
             GetInput(12);
+
+        //Secondary Inputs
+        if (Input.GetKeyDown(Key.LEFT))
+            SecondaryGetInput(1);
+        if (Input.GetKeyDown(Key.RIGHT))
+            SecondaryGetInput(2);
+        if (Input.GetKeyDown(Key.K))
+            SecondaryGetInput(3);
+        if (Input.GetKeyDown(Key.L))
+            SecondaryGetInput(4);
     }
 
     void GetInput(int i)
     {
         if (ControllerInput2 != null)
             ControllerInput2(i);
+    }
+
+    void SecondaryGetInput(int i)
+    {
+        if (SecondaryControllerInput2 != null)
+            SecondaryControllerInput2(i);
     }
 }
 
