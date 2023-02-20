@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using TiledMapParser;
 using GXPEngine.Core;
 
-class Orochi : Charecter
+class Orochi : Character
 {
     public Orochi(TiledObject obj = null) : base(obj)
     {

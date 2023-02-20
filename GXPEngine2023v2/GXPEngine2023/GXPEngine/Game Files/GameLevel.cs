@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using TiledMapParser;
 public class GameLevel : Level
 {
-    public List<Charecter> players = new List<Charecter>();
-    Charecter Hitter;
+    public List<Character> players = new List<Character>();
+    Character Hitter;
     public bool pause;
     int pausetime;
     //bool respawn = false; used for smart respawn
@@ -34,7 +34,7 @@ public class GameLevel : Level
         players.Add(AssignChareter(y, false));
         players[0].SetXY(324, 330);
         players[1].SetXY(544, 330);
-        foreach (Charecter a in players)
+        foreach (Character a in players)
         {
             a.AddGround(FindObjectsOfType<Ground>());
             a.AddWalls(FindObjectsOfType<Wall>());
@@ -57,7 +57,7 @@ public class GameLevel : Level
         pausetime = attack.HitStop();
         pause = true;
         this.AddChildAt(attack.parent, this.GetChildCount() - 1);
-        Hitter = attack.parent as Charecter;
+        Hitter = attack.parent as Character;
     }
     void Update()
     {
@@ -65,19 +65,19 @@ public class GameLevel : Level
     }
     protected override void OnDestroy()
     {
-        foreach (Charecter a in players)
+        foreach (Character a in players)
         {
             a.HitConfirm -= Pause;
         }
     }
 
-    Charecter AssignChareter(int b, bool assign)
+    Character AssignChareter(int b, bool assign)
     {
         if (b == 0)
-            return new Charecter(assign);
+            return new Character(assign);
         else if(b == 1)
             return new Orochi(assign);
         else
-            return new Charecter(assign);
+            return new Character(assign);
     }
 }

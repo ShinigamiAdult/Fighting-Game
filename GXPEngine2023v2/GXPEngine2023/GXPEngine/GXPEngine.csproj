@@ -49,7 +49,7 @@
     <Compile Include="Game Files\Orochi.cs" />
     <Compile Include="Game Files\PlayerInput.cs" />
     <Compile Include="Game Files\Level.cs" />
-    <Compile Include="Game Files\Charecter.cs" />
+    <Compile Include="Game Files\Character.cs" />
     <Compile Include="Game Files\Controller.cs" />
     <Compile Include="Game Files\Controller1.cs" />
     <Compile Include="Game Files\PlayerColl.cs" />

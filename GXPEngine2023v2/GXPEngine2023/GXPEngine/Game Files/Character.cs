@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using TiledMapParser;
 using GXPEngine.Core;
-public class Charecter : AnimationSprite
+public class Character : AnimationSprite
 {
     public event Action<AttackClass> HitConfirm;
     public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit }
@@ -30,7 +30,7 @@ public class Charecter : AnimationSprite
     protected List<GameObject> grounds = new List<GameObject>();
     protected List<GameObject> walls = new List<GameObject>();
     protected List<PlayerInput> Inputs = new List<PlayerInput>();
-    protected Charecter opponent;
+    protected Character opponent;
     //Animations
     protected AnimationSprite Walk;
     protected AnimationSprite Block;
@@ -48,7 +48,7 @@ public class Charecter : AnimationSprite
     protected AttackClass UltimateAttack;
 
     protected AttackClass CurrentAttack;
-    public Charecter(TiledObject obj = null) : base("Assets/Test Animations/Chare.png", 1, 1,-1)
+    public Character(TiledObject obj = null) : base("Assets/Test Animations/Chare.png", 1, 1,-1)
     {
         bool assign = obj.GetBoolProperty("Input", true);
         if (assign)
@@ -75,7 +75,7 @@ public class Charecter : AnimationSprite
         BaseHurtBox();
         AddChild(hurtBox);
     }
-    public Charecter(bool assign) : base("Assets/Test Animations/Chare.png", 1, 1,-1)
+    public Character(bool assign) : base("Assets/Test Animations/Chare.png", 1, 1,-1)
     {
         if (assign)
             ((MyGame)game).controller1.ControllerInput1 += AddInput;
@@ -782,7 +782,7 @@ public class Charecter : AnimationSprite
         else
             return false;
     }
-    public void SetOpponent(Charecter player)
+    public void SetOpponent(Character player)
     {
         opponent = player;
         walls.Add(player.playerColl);
@@ -792,7 +792,7 @@ public class Charecter : AnimationSprite
     {
         return CurrentAttack;
     }
-    public Charecter GetOpponent()
+    public Character GetOpponent()
     {
         return opponent;
     }
