@@ -69,6 +69,7 @@ public class GameLevel : Level
         {
             a.HitConfirm -= Pause;
         }
+        base.OnDestroy();
     }
 
     Character AssignChareter(int b, bool assign)

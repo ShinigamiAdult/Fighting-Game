@@ -39,6 +39,7 @@
     <Compile Include="Game Files\AttackClass.cs" />
     <Compile Include="Game Files\Background.cs" />
     <Compile Include="Game Files\Button.cs" />
+    <Compile Include="Game Files\CharacterArt.cs" />
     <Compile Include="Game Files\CharacterIcon.cs" />
     <Compile Include="Game Files\CharacterSelectLevel.cs" />
     <Compile Include="Game Files\CharacterSelectManager.cs" />

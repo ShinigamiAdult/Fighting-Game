@@ -181,7 +181,7 @@ public class Character : AnimationSprite
     protected void GotHit()
     {
         attacking = false;
-        if ((scaleX > 0 && LastInput() == 1) || (scaleX < 0 && LastInput() == 5))
+        if ((scaleX > 0 && (LastInput() == 1 || LastInput() == 8)) || (scaleX < 0 && (LastInput() == 5 || LastInput() == 6)))
         {
             block = true;
         }
@@ -216,21 +216,25 @@ public class Character : AnimationSprite
             vis.visible = true;
         }
         // some sprites should not repeat 
-        //if (true)
-        // {
-        //if (vis.currentFrame != vis.frameCount - 1)
-        //vis.Animate();
-        //}
-        //else
         if ((vis == LightPunch || vis == HardPunch || vis == Hit || vis == Block) && vis.currentFrame == vis.frameCount - 1)
         {
-            attacking = false;
-            hit = false;
-            block = false;
-            vis.currentFrame = 0;
-            BaseHurtBox();
+            if ((vis == LightPunch || vis == LightKick || vis == HardPunch))
+            {
+                BaseHurtBox();
+                attacking = false;
+            }
+            if (vis == Hit)
+            {
+                Hit.currentFrame = 0;
+                hit = false;
+            }
+            if (vis == Block && opponent.GetCurrentAttack().GetState() == AttackClass.State.Recovery)
+            {
+                Block.currentFrame = 0;
+                block = false;
+            }
         }
-        //else
+        else
         vis.Animate();
     }
     protected virtual void SetState()
@@ -251,7 +255,7 @@ public class Character : AnimationSprite
                 break;
             case State.Move:
                 {
-                    if(opponent.hurtBox.HitTest(playerColl) && (scaleX > 0 && LastInput() == 1) || (scaleX < 0 && LastInput() == 5) && opponent.GetCurrentAttack().GetState() == AttackClass.State.StartUp)
+                    if(opponent.hurtBox.HitTest(playerColl) && opponent.GetCurrentAttack().GetState() == AttackClass.State.StartUp)
                     {
                         block = true;
                     }
@@ -270,7 +274,7 @@ public class Character : AnimationSprite
                 break;
             case State.Block:
                 {
-                    if (Block.currentFrame == Block.frameCount -2)
+                    if (Block.currentFrame == Block.frameCount - 2)
                     {
                         KnockBack();
                     }
@@ -433,7 +437,6 @@ public class Character : AnimationSprite
         }*/
 
     }
-
     protected virtual void OnAttack()
     {
         if (attackCode == 1 && !hit && !block)
@@ -460,7 +463,6 @@ public class Character : AnimationSprite
             SetVisible(HardPunch);
         }
     }
-
     protected void AttackCollision(AttackClass attack)
     {
         if (hurtBox.HitTest(opponent.playerColl) && opponent.CurrentAttack.GetState() != AttackClass.State.Active)
@@ -526,7 +528,6 @@ public class Character : AnimationSprite
     {
         return current;
     }
-
     public void SetState(State state)
     {
         current = state;

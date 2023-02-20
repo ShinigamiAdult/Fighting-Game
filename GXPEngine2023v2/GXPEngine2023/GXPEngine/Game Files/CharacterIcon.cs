@@ -29,7 +29,6 @@ public class CharacterIcon : AnimationSprite
 
     public void P2Vis()
     {
-
         p2.visible = true;
     }
 

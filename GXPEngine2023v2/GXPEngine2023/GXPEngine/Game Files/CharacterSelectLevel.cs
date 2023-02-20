@@ -26,6 +26,7 @@ public class CharacterSelectLevel : Level
 
         manager = FindObjectOfType<CharacterSelectManager>();
        manager.AddCharaters(FindObjectsOfType<CharacterIcon>());
+        manager.AddImages(FindObjectsOfType<CharacterArt>());
     }
 }
 

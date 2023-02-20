@@ -11,9 +11,10 @@ public class CharacterSelectManager : AnimationSprite
     int index2;
     bool select1;
     bool select2;
+    List<CharacterArt> Images = new List<CharacterArt>();
     public CharacterSelectManager(TiledObject obj = null) : base("Assets/Boxes/HurtBox.png", 1, 1, -1, false, false)
     {
-        visible = false;
+        alpha = 0;
         ((MyGame)game).controller1.SecondaryControllerInput1 += AddInput1;
         ((MyGame)game).controller2.SecondaryControllerInput2 += AddInput2;
     }
@@ -28,6 +29,10 @@ public class CharacterSelectManager : AnimationSprite
         characters.Add(charecter);
     }
 
+    public void AddImages(CharacterArt[] image)
+    {
+       Images.AddRange(image);
+    }
     public int GetCharecterCount()
     {
         return characters.Count - 1;
@@ -41,11 +46,13 @@ public class CharacterSelectManager : AnimationSprite
             if (index1 == i)
             {
                 characters[i].P1Vis();
+                Images[0].ShowImage(i);
             }
 
             if (index2 == i)
             {
                 characters[i].P2Vis();
+                Images[1].ShowImage(i);
             }
         }
         if (select1 && select2)
