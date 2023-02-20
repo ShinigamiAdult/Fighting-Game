@@ -16,6 +16,11 @@ class Orochi : Character
     {
 
     }
+
+    protected override void SetStats()
+    {
+        base.SetStats();
+    }
     protected override void Initalize()
     {
         idle = new AnimationSprite("Assets/Charecter 1/C1 Idle.png", 2, 1, 2, false, false);

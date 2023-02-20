@@ -29,11 +29,13 @@ public class GameLevel : Level
     }
     void AddPlayers(int i, int y)
     {
-
+        HPBar[] bars = FindObjectsOfType<HPBar>();
         players.Add(AssignChareter(i,true));
         players.Add(AssignChareter(y, false));
         players[0].SetXY(324, 330);
+        bars[0].SetUpBar(players[0]);
         players[1].SetXY(544, 330);
+        bars[1].SetUpBar(players[1]);
         foreach (Character a in players)
         {
             a.AddGround(FindObjectsOfType<Ground>());

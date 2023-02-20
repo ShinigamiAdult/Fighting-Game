@@ -7,10 +7,15 @@ using GXPEngine.Core;
 public class Character : AnimationSprite
 {
     public event Action<AttackClass> HitConfirm;
+    public event Action<float> TakeDamage;
     public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit }
     protected State current;
     protected float gravity = 0;
     protected float force = 0.6f;
+    protected float Horizontalspeed = 5;
+    protected float VerticalSpeed = -18;
+    protected float MaxHealth;
+    protected float currentHealth;
     protected bool grounded;
     protected bool attacking;
     protected bool moving;
@@ -21,8 +26,6 @@ public class Character : AnimationSprite
     protected float vy; // Update first this then use it to do Move until collision
     protected float vx; // Update first this then use it to do Move until collision
     protected int attackCode;
-    protected float Horizontalspeed = 5;
-    protected float VerticalSpeed = -18;
     protected float damage;
     public float knock;
     protected PlayerColl playerColl;
@@ -87,7 +90,7 @@ public class Character : AnimationSprite
         }
         SetOrigin(width / 2, height / 2);
         alpha = 0;
-
+        SetStats();
         Initalize();
         CurrentAttack = LightPunch;
         playerColl = new PlayerColl();
@@ -101,7 +104,11 @@ public class Character : AnimationSprite
         BaseHurtBox();
         AddChild(hurtBox);
     }
-
+    protected virtual void SetStats()
+    {
+        MaxHealth = 1000;
+        currentHealth = MaxHealth;
+    }
     protected void GetCurrentAttack(AttackClass attack)
     {
         CurrentAttack = attack;
@@ -184,9 +191,17 @@ public class Character : AnimationSprite
         if ((scaleX > 0 && (LastInput() == 1 || LastInput() == 8)) || (scaleX < 0 && (LastInput() == 5 || LastInput() == 6)))
         {
             block = true;
+            currentHealth -= opponent.damage / 3;
+
         }
         else
+        {
             hit = true;
+            currentHealth -= opponent.damage;
+        }
+
+        if (TakeDamage != null)
+            TakeDamage(currentHealth);
     }
     public void KnockBack()
     {
@@ -835,5 +850,10 @@ public class Character : AnimationSprite
         ((MyGame)game).controller1.ControllerInput1 -= AddInput;
         ((MyGame)game).controller2.ControllerInput2 -= AddInput;
         base.OnDestroy();
+    }
+
+    public float GetMaxHP()
+    {
+        return MaxHealth;
     }
 }

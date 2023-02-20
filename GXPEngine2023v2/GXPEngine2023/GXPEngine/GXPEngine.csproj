@@ -46,6 +46,7 @@
     <Compile Include="Game Files\Controller2.cs" />
     <Compile Include="Game Files\GameLevel.cs" />
     <Compile Include="Game Files\Ground.cs" />
+    <Compile Include="Game Files\HPBar.cs" />
     <Compile Include="Game Files\HurtBox.cs" />
     <Compile Include="Game Files\Orochi.cs" />
     <Compile Include="Game Files\PlayerInput.cs" />
