@@ -55,7 +55,9 @@
     <Compile Include="Game Files\Controller.cs" />
     <Compile Include="Game Files\Controller1.cs" />
     <Compile Include="Game Files\PlayerColl.cs" />
+    <Compile Include="Game Files\SPBar.cs" />
     <Compile Include="Game Files\TestAnimation.cs" />
+    <Compile Include="Game Files\UILevel.cs" />
     <Compile Include="Game Files\Wall.cs" />
     <Compile Include="GXPEngine\AddOns\Gizmos.cs" />
     <Compile Include="GXPEngine\AddOns\SpriteBatch.cs" />

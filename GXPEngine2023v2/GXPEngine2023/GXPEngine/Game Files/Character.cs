@@ -8,14 +8,21 @@ public class Character : AnimationSprite
 {
     public event Action<AttackClass> HitConfirm;
     public event Action<float> TakeDamage;
+    public event Action<float> BarFill;
     public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit }
     protected State current;
+    //Stats
     protected float gravity = 0;
     protected float force = 0.6f;
     protected float Horizontalspeed = 5;
     protected float VerticalSpeed = -18;
     protected float MaxHealth;
     protected float currentHealth;
+    protected float MaxPower;
+    protected float currentPower;
+    protected float damage;
+    public float knock;
+    //Checkings
     protected bool grounded;
     protected bool attacking;
     protected bool moving;
@@ -23,17 +30,18 @@ public class Character : AnimationSprite
     protected bool hit;
     protected bool block;
     protected bool cornered;
+    protected int attackCode;
+    //Positoning
     protected float vy; // Update first this then use it to do Move until collision
     protected float vx; // Update first this then use it to do Move until collision
-    protected int attackCode;
-    protected float damage;
-    public float knock;
+    //Collisions and Colliders
     protected PlayerColl playerColl;
     protected HurtBox hurtBox;
+    protected Character opponent;
     protected List<GameObject> grounds = new List<GameObject>();
     protected List<GameObject> walls = new List<GameObject>();
+    //Inputs
     protected List<PlayerInput> Inputs = new List<PlayerInput>();
-    protected Character opponent;
     //Animations
     protected AnimationSprite Walk;
     protected AnimationSprite Block;
@@ -68,13 +76,13 @@ public class Character : AnimationSprite
         Initalize();
         CurrentAttack = LightPunch;
         playerColl = new PlayerColl();
-        playerColl.visible = true;
+        playerColl.visible = false;
         playerColl.SetScaleXY(2f, 5.5f);
         playerColl.SetXY(0, 0f);
         AddChild(playerColl);
 
         hurtBox = new HurtBox();
-        hurtBox.visible = true;
+        hurtBox.visible = false;
         BaseHurtBox();
         AddChild(hurtBox);
     }
@@ -94,13 +102,13 @@ public class Character : AnimationSprite
         Initalize();
         CurrentAttack = LightPunch;
         playerColl = new PlayerColl();
-        playerColl.visible = true;
+        playerColl.visible = false;
         playerColl.SetScaleXY(2f, 5.5f);
         playerColl.SetXY(0, 0f);
         AddChild(playerColl);
 
         hurtBox = new HurtBox();
-        hurtBox.visible = true;
+        hurtBox.visible = false;
         BaseHurtBox();
         AddChild(hurtBox);
     }
@@ -108,6 +116,8 @@ public class Character : AnimationSprite
     {
         MaxHealth = 1000;
         currentHealth = MaxHealth;
+        MaxPower = 500;
+        currentPower = 0;
     }
     protected void GetCurrentAttack(AttackClass attack)
     {
@@ -168,13 +178,11 @@ public class Character : AnimationSprite
         hurtBox.SetXY(0, 0);
         hurtBox.SetScaleXY(0, 0);
     }
-
     protected void BasePlayerColl()
     {
         playerColl.SetScaleXY(2f, 5.5f);
         playerColl.SetXY(0, 0f);
     }
-
     protected void SetAttackDmg(float dmg, float kn)
     {
         damage = dmg;
@@ -188,20 +196,42 @@ public class Character : AnimationSprite
     protected void GotHit()
     {
         attacking = false;
-        if ((scaleX > 0 && (LastInput() == 1 || LastInput() == 8)) || (scaleX < 0 && (LastInput() == 5 || LastInput() == 6)))
+        if (Blocking())
         {
             block = true;
             currentHealth -= opponent.damage / 3;
-
+            if (currentPower + opponent.damage < MaxPower)
+                currentPower += opponent.damage;
+            else
+                while (currentPower < 500)
+                {
+                    currentPower += 0.1f;
+                }
         }
         else
         {
             hit = true;
             currentHealth -= opponent.damage;
+            if(currentPower + opponent.damage / 1.5f < MaxPower)
+            currentPower += opponent.damage / 1.5f;
+            else
+                while(currentPower < MaxPower)
+                {
+                    currentPower += 0.1f;
+                }
         }
 
         if (TakeDamage != null)
             TakeDamage(currentHealth);
+        if (BarFill != null)
+            BarFill(currentPower);
+    }
+    public bool Blocking()
+    {
+        if ((scaleX > 0 && (LastInput() == 1 || LastInput() == 8)) || (scaleX < 0 && (LastInput() == 5 || LastInput() == 6)))
+            return true;
+        else 
+            return false;
     }
     public void KnockBack()
     {
@@ -270,10 +300,6 @@ public class Character : AnimationSprite
                 break;
             case State.Move:
                 {
-                    if(opponent.hurtBox.HitTest(playerColl) && opponent.GetCurrentAttack().GetState() == AttackClass.State.StartUp)
-                    {
-                        block = true;
-                    }
                     SetVisible(Walk);
                 }
                 break;
@@ -484,10 +510,18 @@ public class Character : AnimationSprite
         {
             attack.Hit();
             opponent.GotHit();
+            if (currentPower + damage * 2 < MaxPower)
+                currentPower += damage * 2;
+            else
+                while (currentPower < MaxPower)
+                {
+                    currentPower += 0.1f;
+                }
             if (HitConfirm != null)
-            {
                 HitConfirm(CurrentAttack);
-            }
+
+            if (BarFill != null)
+                BarFill(currentPower);
         }
     }
     protected void UpdatePosition()
@@ -547,12 +581,10 @@ public class Character : AnimationSprite
     {
         current = state;
     }
-
     public void AddGround(GameObject[] ground)
     {
         grounds.AddRange(ground);
     }
-
     public void AddWalls(GameObject[] wall)
     {
         walls.AddRange(wall);
@@ -566,7 +598,6 @@ public class Character : AnimationSprite
         if (parent != null && !opponent.attacking)
             parent.AddChildAt(this, parent.GetChildCount() - 1);
     }
-
     protected bool ValidInput(int a)
     {
         PlayerInput c = Inputs.FindLast(x => x.GetKey() == a);
@@ -636,7 +667,6 @@ public class Character : AnimationSprite
         else
             return false;
     }
-
     protected bool QuarterCircleRight()
     {
         bool down = false;
@@ -664,7 +694,6 @@ public class Character : AnimationSprite
         else
             return false;
     }
-
     protected bool ZMotionLeft()
     {
         bool side1 = false;
@@ -697,7 +726,6 @@ public class Character : AnimationSprite
         else
             return false;
     }
-
     protected bool ZMotionRight()
     {
         bool side1 = false;
@@ -730,7 +758,6 @@ public class Character : AnimationSprite
         else
             return false;
     }
-
     protected bool QuarterCircleForward()
     {
         if (scaleX > 0)
@@ -752,7 +779,6 @@ public class Character : AnimationSprite
         else
             return ZMotionLeft();
     }
-
     protected bool ZMotionForward()
     {
         if (scaleX > 0)
@@ -760,7 +786,6 @@ public class Character : AnimationSprite
         else
             return ZMotionLeft();
     }
-
     protected bool DashLeft()
     {
         bool side = false;
@@ -779,7 +804,6 @@ public class Character : AnimationSprite
         else
             return false;
     }
-
     protected bool DashRight()
     {
         bool side = false;
@@ -803,7 +827,6 @@ public class Character : AnimationSprite
         opponent = player;
         walls.Add(player.playerColl);
     }
-
     public AttackClass GetCurrentAttack()
     {
         return CurrentAttack;
@@ -833,6 +856,10 @@ public class Character : AnimationSprite
                 current = State.Hit;
             if (block)
                 current = State.Block;
+            if (opponent.hurtBox.HitTest(playerColl) && opponent.GetCurrentAttack().GetState() == AttackClass.State.StartUp && Blocking())
+            {
+                current = State.Block;
+            }
 
             if (Input.GetKeyDown(Key.ONE))
                 playerColl.visible = !playerColl.visible;
@@ -844,16 +871,18 @@ public class Character : AnimationSprite
             SetState();
         }
     }
-
     protected override void OnDestroy()
     {
         ((MyGame)game).controller1.ControllerInput1 -= AddInput;
         ((MyGame)game).controller2.ControllerInput2 -= AddInput;
         base.OnDestroy();
     }
-
     public float GetMaxHP()
     {
         return MaxHealth;
+    }
+    public float GetMaxSP()
+    {
+        return MaxPower;
     }
 }

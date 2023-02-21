@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class MyGame : Game
 {
     public CharacterSelectLevel CharacterSelect;
+    public UILevel UILevel;
     public GameLevel GameLevel;
     public Controller1 controller1;
     public Controller2 controller2;
@@ -31,6 +32,8 @@ public class MyGame : Game
             GameLevel.Destroy();
         GameLevel = new GameLevel(filename,char1,char2);
         AddChild(GameLevel);
+
+        LoadUILevel("UI.tmx");
     }
     public void LoadCharecterSelect(string filename)
     {
@@ -38,6 +41,14 @@ public class MyGame : Game
             CharacterSelect.Destroy();
         CharacterSelect = new CharacterSelectLevel(filename);
         AddChild(CharacterSelect);
+    }
+
+    public void LoadUILevel(string filename)
+    {
+        if (UILevel != null)
+            UILevel.Destroy();
+        UILevel = new UILevel(filename);
+        AddChild(UILevel);
     }
     public void LoadCurrentLevel()
     {

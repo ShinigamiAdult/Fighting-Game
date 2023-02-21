@@ -5,49 +5,50 @@ using System.Collections.Generic;
 using TiledMapParser;
 
 
-class HPBar : AnimationSprite
+class SPBar : AnimationSprite
 {
-    float hp1;
+    float sp1;
     Sprite fill;
     Sprite border;
-    public HPBar(TiledObject obj = null) : base("Assets/Boxes/UIBackground.png", 1, 1, -1, false, false)
+    public SPBar(TiledObject obj = null) : base("Assets/Boxes/ultimate_bar_background.png", 1, 1, -1, false, false)
     {
         bool invert = obj.GetBoolProperty("Inverted");
-        fill = new Sprite("Assets/Boxes/UIPlayerHealth.png");
-        fill.SetScaleXY(1f, 1);
+        fill = new Sprite("Assets/Boxes/ultimate_bar_fill.png");
+
         if (invert)
         {
             fill.SetOrigin(0, fill.height / 2);
-            fill.SetXY(width / 2 + 0, -0.5f);
+            fill.SetXY(width / 2 + 1, 0);
         }
         else
         {
             fill.SetOrigin(0, fill.height / 2);
-            fill.SetXY(-width / 2 + 0, -0.5f);
+            fill.SetXY(-width / 2 + 1, 0);
         }
         AddChild(fill);
 
-        border = new Sprite("Assets/Boxes/hp_bar.png");
+        border = new Sprite("Assets/Boxes/ultimate_bar.png");
         if (invert)
         {
             border.SetOrigin(0, border.height / 2);
-            border.SetXY(width / 2, -0.5f);
+            border.SetXY(width / 2, 0);
         }
         else
         {
             border.SetOrigin(0, border.height / 2);
-            border.SetXY(-width / 2, -0.5f);
+            border.SetXY(-width / 2, 0);
         }
         AddChild(border);
     }
     public void SetUpBar(Character player)
     {
-        player.TakeDamage += UIUpdate;
-        hp1 = fill.scaleX / player.GetMaxHP();
+        player.BarFill += UIUpdate;
+        sp1 = fill.scaleX / player.GetMaxSP();
+        fill.SetScaleXY(0, 1);
     }
     public void UIUpdate(float Chp)
     {
-        fill.SetScaleXY(hp1 * Chp, 1);
+        fill.SetScaleXY(sp1 * Chp, 1);
     }
 
     protected override void OnDestroy()
