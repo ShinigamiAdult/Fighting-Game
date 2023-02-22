@@ -31,7 +31,7 @@ public class MyGame : Game
         if (StartScreen != null)
             StartScreen.Destroy();
         if (CharacterSelect != null)
-            CharacterSelect.Destroy();
+            CharacterSelect.Destroy();      
         if (GameLevel != null)
             GameLevel.Destroy();
         GameLevel = new GameLevel(filename,char1,char2);

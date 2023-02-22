@@ -10,6 +10,8 @@ public class CharacterSelectLevel : Level
     public CharacterSelectManager manager;
     public CharacterSelectLevel(string filename) : base(filename,0,0)
     {
+        Sound charSelect = new Sound("Assets/Sound/VoiceLines/ChareterSelect.wav");
+        charSelect.Play();
         //Console.WriteLine("Game Width: " + game.width);
     }
 
@@ -23,7 +25,6 @@ public class CharacterSelectLevel : Level
         loader.LoadTileLayers();
         loader.addColliders = true;
         loader.LoadObjectGroups();
-
         manager = FindObjectOfType<CharacterSelectManager>();
        manager.AddCharaters(FindObjectsOfType<CharacterIcon>());
         manager.AddImages(FindObjectsOfType<CharacterArt>());

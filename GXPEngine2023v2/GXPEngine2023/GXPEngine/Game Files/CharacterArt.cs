@@ -9,7 +9,7 @@ public class CharacterArt : AnimationSprite
     public CharacterArt(TiledObject obj = null) : base("Assets/Boxes/HurtBox.png", 1, 1, -1, false, false)
     {
         alpha = 0;
-        AddImage("Assets/Character Art/player_0.png");
+        //AddImage("Assets/Character Art/player_0.png");
         AddImage("Assets/Character Art/player_1.png");
         AddImage("Assets/Character Art/player_2.png");
         AddImage("Assets/Character Art/player_3.png");

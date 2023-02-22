@@ -12,11 +12,16 @@ public class CharacterSelectManager : AnimationSprite
     bool select1;
     bool select2;
     List<CharacterArt> Images = new List<CharacterArt>();
+    Sound orochi;
+    Sound momo;
+    int delay = 120;
     public CharacterSelectManager(TiledObject obj = null) : base("Assets/Boxes/HurtBox.png", 1, 1, -1, false, false)
     {
         alpha = 0;
         ((MyGame)game).controller1.SecondaryControllerInput1 += AddInput1;
         ((MyGame)game).controller2.SecondaryControllerInput2 += AddInput2;
+        orochi = new Sound("Assets/Sound/VoiceLines/Kumagawa_Select.wav");
+        momo = new Sound("Assets/Sound/VoiceLines/Momo_Select.wav");
     }
 
     public void AddCharaters(CharacterIcon[] charecter)
@@ -56,7 +61,12 @@ public class CharacterSelectManager : AnimationSprite
             }
         }
         if (select1 && select2)
+        {
+            delay--;
+        }
+        if (delay == 0)
             ((MyGame)game).LoadGameLevel("TestMap.tmx");
+
     }
 
     void AddInput1(int i)
@@ -76,7 +86,13 @@ public class CharacterSelectManager : AnimationSprite
                 else
                     index1 = 0;
             if (i == 3)
+            {
                 select1 = true;
+                if (index1 == 0)
+                    orochi.Play();
+                if (index1 == 1)
+                    momo.Play();
+            }
         }
         else if (select1 && i == 3)
             select1 = false;
@@ -99,7 +115,13 @@ public class CharacterSelectManager : AnimationSprite
                 else
                     index2 = 0;
             if (i == 3)
+            {
                 select2 = true;
+                if (index2 == 0)
+                    orochi.Play();
+                if (index2 == 1)
+                    momo.Play();
+            }
         }
         else if (select2 && i == 3)
             select2 = false;
@@ -113,5 +135,12 @@ public class CharacterSelectManager : AnimationSprite
     public int GetIndex2()
     {
         return index2;
+    }
+
+    protected override void OnDestroy()
+    {
+        ((MyGame)game).controller1.SecondaryControllerInput1 -= AddInput1;
+        ((MyGame)game).controller2.SecondaryControllerInput2 -= AddInput2;
+        base.OnDestroy();
     }
 }

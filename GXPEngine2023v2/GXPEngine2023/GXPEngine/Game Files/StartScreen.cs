@@ -5,9 +5,13 @@ using System.Collections.Generic;
 using TiledMapParser;
 public class StartScreen : Level
 {
+    int delay;
+    Sound title;
     //bool respawn = false; used for smart respawn
     public StartScreen(string filename) : base(filename, 0,0)
     {
+        title = new Sound("Assets/Sound/VoiceLines/Title_screen.wav");
+
     }
 
    /* public override void CreateLevel(int i = 0, int y = 0)
@@ -26,7 +30,14 @@ public class StartScreen : Level
     {
         if(Input.GetKeyDown(Key.P))
         {
+            title.Play();
+            delay = 60;
+        }
+        if(delay == 1)
+        {
             ((MyGame)game).LoadCharecterSelect("CharecterSelect.tmx");
         }
+        if (delay > 1)
+            delay--;
     }
 }

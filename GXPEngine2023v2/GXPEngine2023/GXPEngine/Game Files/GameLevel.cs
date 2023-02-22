@@ -15,7 +15,8 @@ public class GameLevel : Level
     int RoundCount = 0;
     int P1Round;
     int P2Round;
-    Level Announcer;
+    Level Texter;
+    //Announcer Announcer;
     //bool respawn = false; used for smart respawn
     public GameLevel(string filename, int i, int y) : base(filename, i, y)
     {
@@ -97,9 +98,9 @@ public class GameLevel : Level
     Character AssignChareter(int b, bool assign)
     {
         if (b == 0)
-            return new Character(assign);
-        else if (b == 1)
             return new Orochi(assign);
+        else if (b == 1)
+            return new Character(assign);
         else
             return new Character(assign);
     }
@@ -121,25 +122,48 @@ public class GameLevel : Level
     {
         if (pausetime == 120)
         {
-            RemoveChild(Announcer);
-            Announcer.Destroy();
+            RemoveChild(Texter);
+            Texter.Destroy();
             if (P1Round != 2 && P2Round != 2)
             {
-                Announcer = new Level("Announcment Maps/Round" + RoundCount + ".tmx", 0, 0);
+                Texter = new Level("Announcment Maps/Round" + RoundCount + ".tmx", 0, 0);
                 roundBegin = true;
                 Reset();
+                int num = Utils.Random(1, 4);
+                Sound a = new Sound("Assets/Sound/VoiceLines/Round" + RoundCount + num + ".wav");
+                a.Play();
             }
             if (P1Round == 2)
             {
-                Announcer = new Level("Announcment Maps/P1wins.tmx", 0, 0);
+                Texter = new Level("Announcment Maps/P1wins.tmx", 0, 0);
                 gameEnd = true;
+                if (players[0] is Orochi)
+                {
+                    Sound a = new Sound("Assets/Sound/VoiceLines/Kumagawa_Wins.wav");
+                    a.Play();
+                }
+                else if (players[0] is Character)
+                {
+                    Sound a = new Sound("Assets/Sound/VoiceLines/Momo_Wins.wav");
+                    a.Play();
+                }
             }
             if (P2Round == 2)
             {
-                Announcer = new Level("Announcment Maps/P2wins.tmx", 0, 0);
+                Texter = new Level("Announcment Maps/P2wins.tmx", 0, 0);
                 gameEnd = true;
+                if (players[1] is Orochi)
+                {
+                    Sound a = new Sound("Assets/Sound/VoiceLines/Kumagawa_Wins.wav");
+                    a.Play();
+                }
+                else if (players[1] is Character)
+                {
+                    Sound a = new Sound("Assets/Sound/VoiceLines/Momo_Wins.wav");
+                    a.Play();
+                }
             }
-            AddChild(Announcer);
+            AddChild(Texter);
             roundEnd = false;
         }
         if (pausetime > 120)
@@ -159,15 +183,15 @@ public class GameLevel : Level
     {
         if (pausetime == 30)
         {
-            RemoveChild(Announcer);
-            Announcer.Destroy();
-            Announcer = new Level("Announcment Maps/Fight.tmx", 0, 0);
-            AddChild(Announcer);
+            RemoveChild(Texter);
+            Texter.Destroy();
+            Texter = new Level("Announcment Maps/Fight.tmx", 0, 0);
+            AddChild(Texter);
         }
         if (pausetime == 0)
         {
-            RemoveChild(Announcer);
-            Announcer.Destroy();
+            RemoveChild(Texter);
+            Texter.Destroy();
             roundBegin = false;
         }
         if (pausetime > 0)
@@ -188,8 +212,8 @@ public class GameLevel : Level
     {
         RoundCount++;
         pausetime = i;
-        Announcer = new Level("Announcment Maps/KORound.tmx", 0, 0);
-        AddChild(Announcer);
+        Texter = new Level("Announcment Maps/KORound.tmx", 0, 0);
+        AddChild(Texter);
         roundEnd = true;
     }
 }
