@@ -82,7 +82,7 @@ class Orochi : Character
 
         Hit = new AnimationSprite("Assets/Charecter 1/C1 Hit.png", 3, 1, 3, false, false);
         Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 8);
+        Hit.SetCycle(0, 3, 16);
         Hit.SetXY(0, -8);
         AddChild(Hit);
         Hit.visible = false;
@@ -122,7 +122,6 @@ class Orochi : Character
         AddChild(DashBackwards);
         DashBackwards.visible = false;
     }
-
     protected override void SetVisible(AnimationSprite vis)
     {
         //Sets the current sprite based on state and animates it
@@ -148,11 +147,17 @@ class Orochi : Character
         {
             if (vis is AttackClass)
             {
-                BaseHurtBox();
+                if (grounded)
+                    BaseHurtBox();
                 attacking = false;
                 vis.currentFrame = 0;
                 if (vis == CrouchAttack)
                     crouching = true;
+                if (vis == JumpAttack && !grounded)
+                {
+                    vis.Animate();
+                    attacking = true;
+                }
             }
             if (vis == Hit)
             {
@@ -164,7 +169,7 @@ class Orochi : Character
                 Block.currentFrame = 0;
                 block = false;
             }
-            if(vis == DashBackwards || vis == DashForward)
+            if (vis == DashBackwards || vis == DashForward)
             {
                 vis.currentFrame = 0;
                 dashLeft = false;
@@ -175,202 +180,55 @@ class Orochi : Character
         else
             vis.Animate();
     }
-    protected override void SetState()
-    {
-        //Setes the player state
-        switch (current)
-        {
-            case State.Jump:
-                {
-                    if (Jump != null)
-                        SetVisible(Jump);
-                }
-                break;
-            case State.Crouch:
-                {
-                    SetVisible(Crouch);
-                    Crouching();
-                }
-                break;
-            case State.Move:
-                {
-                    SetVisible(Walk);
-                }
-                break;
-            case State.Attack:
-                {
-
-                }
-                break;
-            case State.Netural:
-                {
-                    SetVisible(idle);
-                    BasePlayerColl();
-                }
-                break;
-            case State.Block:
-                {
-                    if (Block.currentFrame == Block.frameCount - 2)
-                    {
-                        KnockBack();
-                    }
-                    SetVisible(Block);
-
-                }
-                break;
-            case State.Hit:
-                {
-                    if (Hit.currentFrame == Hit.frameCount - 2)
-                    {
-                        KnockBack();
-                    }
-                    SetVisible(Hit);
-
-                }
-                break;
-            case State.Dead:
-                {
-                    SetVisible(idle);
-                }
-                break;
-            case State.DashForward:
-                {
-                    SetVisible(DashForward);
-                }
-                break;
-            case State.DashBackward:
-                {
-                    SetVisible(DashBackwards);
-                }
-                break;
-
-        }
-    }
-
-    protected override void MoveInputs()
-    {
-        //Left
-        if (LastInput() == 1 && !block)
-        {
-            if (DashLeft())
-            {
-                vx = -Horizontalspeed * 15;
-                dashLeft = true;
-            }
-            else
-            {
-                vx = -Horizontalspeed;
-                current = State.Move;
-                moving = true;
-            }
-
-        }
-        if (grounded)
-        {
-            //LeftUP
-            if (LastInput() == 2)
-            {
-                gravity = VerticalSpeed;
-                vx = -Horizontalspeed * 1.2f;
-                current = State.Jump;
-                grounded = false;
-            }
-            //UP
-            if (LastInput() == 3)
-            {
-
-                gravity = VerticalSpeed;
-                current = State.Jump;
-                grounded = false;
-            }
-            //RightUP
-            if (LastInput() == 4)
-            {
-                gravity = VerticalSpeed;
-                vx = Horizontalspeed * 1.2f;
-                current = State.Jump;
-                grounded = false;
-            }
-        }
-        //Right
-        if (LastInput() == 5 && !block)
-        {
-            if (DashRight())
-            {
-                vx = Horizontalspeed * 15;
-                dashRight = true;
-            }
-            else
-            {
-                vx = Horizontalspeed;
-                current = State.Move;
-                moving = true;
-            }
-        }
-        if ((LastInput() == 6) && !block)
-        {
-            current = State.Crouch;
-            crouching = true;
-        }
-        if (LastInput() == 7)
-        {
-            current = State.Crouch;
-            crouching = true;
-        }
-        if ((LastInput() == 8) && !block)
-        {
-            current = State.Crouch;
-            crouching = true;
-        }
-    }
-
-    protected override void LPAttack()
+    void LPAttack()
     {
         LightPunch.ResetAttack();
         GetCurrentAttack(LightPunch);
         SetHurBox(60, -25, 2f, 1f);
         SetAttackDmg(20, 4);
-        attackCode = 1;
+        CurrentAttack = LightPunch;
+        attacking = true;
     }
-
-    protected override void HPAttack()
+    void HPAttack()
     {
         HardPunch.ResetAttack();
         GetCurrentAttack(HardPunch);
-        SetHurBox(60, -25, 2.5f, 1f);
-        SetAttackDmg(30, 6);
-        attackCode = 2;
+        SetHurBox(60, -35, 2.5f, 1f);
+        SetAttackDmg(30, 5);
+        CurrentAttack = HardPunch;
+        attacking = true;
         if (scaleX > 0)
             vx += Horizontalspeed * 10;
         else
             vx -= Horizontalspeed * 10;
     }
-    protected override void LKAttack()
+    void LKAttack()
     {
         LightKick.ResetAttack();
         GetCurrentAttack(LightKick);
         SetHurBox(80, -50, 1.5f, 0.7f);
         hurtBox.rotation = -40;
         SetAttackDmg(10, 3);
-        attackCode = 3;
+        CurrentAttack = LightKick;
+        attacking = true;
     }
-
     void CrouchingAttack()
     {
         CrouchAttack.ResetAttack();
         GetCurrentAttack(CrouchAttack);
         SetHurBox(70, 50, 1.5f, 1f);
         SetAttackDmg(10, 3);
-        attackCode = 5;
+        CurrentAttack = CrouchAttack;
+        attacking = true;
     }
-
     void JumpingAttack()
     {
         JumpAttack.ResetAttack();
         GetCurrentAttack(JumpAttack);
-        SetHurBox(20, 80, 5f, 2f);
+        SetHurBox(15, -10, 5f, 1.5f);
         SetAttackDmg(10, 3);
-        attackCode = 6;
+        CurrentAttack = JumpAttack;
+        attacking = true;
     }
     protected override void AttackInputs()
     {
@@ -381,95 +239,26 @@ class Orochi : Character
         {
             LPAttack();
             //if(!grounded) jump attack (insert here)
-            current = State.Attack;
-            attacking = true;
         }
         else if (ValidInput(10) && grounded)
         {
             HPAttack();
-            current = State.Attack;
-            attacking = true;
         }
         else if (ValidInput(11))
         {
-            if (current != State.Crouch && grounded)
+            if (!crouching && grounded)
             {
                 LKAttack();
             }
-            else if (grounded && current == State.Crouch)
-            {
-                CrouchingAttack();
-            }
-            else if (!grounded && !crouching)
+            else if (!grounded && !crouching && gravity > 0)
             {
                 JumpingAttack();
             }
-            current = State.Attack;
-            attacking = true;
+            else if (grounded && crouching)
+            {
+                CrouchingAttack();
+            }
         }
-        /*else if (ValidInput(12))
-        {
-            HKAttack();
-            current = State.Attack;
-            attacking = true;
-        }*/
 
     }
-
-    protected override void OnAttack()
-    {
-        if (attackCode == 1)
-        {
-            if (LightPunch.FrameValidation())
-            {
-                AttackCollision(LightPunch);
-            }
-
-            if (LightPunch.HitConfirm() && LightPunch.GetState() == AttackClass.State.Recovery && ValidInput(10))
-            {
-                HPAttack();
-                //HardPunch.currentFrame = 1;
-            }
-            else
-                SetVisible(LightPunch);
-        }
-        if (attackCode == 2)
-        {
-            if (HardPunch.FrameValidation())
-            {
-                AttackCollision(HardPunch);
-            }
-            SetVisible(HardPunch);
-        }
-
-        if (attackCode == 3)
-        {
-            if (LightKick.FrameValidation())
-            {
-                AttackCollision(LightKick);
-            }
-            SetVisible(LightKick);
-        }
-        if(attackCode == 5)
-        {
-            if (CrouchAttack.FrameValidation())
-            {
-                AttackCollision(CrouchAttack);
-            }
-            SetVisible(CrouchAttack);
-        }
-        if (attackCode == 6)
-        {
-            if (JumpAttack.FrameValidation())
-            {
-                AttackCollision(JumpAttack);
-            }
-            SetVisible(JumpAttack);
-        }
-        if (CurrentAttack.Cancel() && CurrentAttack.GetState() == AttackClass.State.Recovery)
-        {
-
-        }
-    }
-
 }
