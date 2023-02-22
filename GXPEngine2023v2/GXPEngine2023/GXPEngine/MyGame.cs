@@ -4,9 +4,11 @@ using System.Drawing;                           // System.Drawing contains drawi
 using System.Collections.Generic;
 public class MyGame : Game
 {
+    public StartScreen StartScreen;
     public CharacterSelectLevel CharacterSelect;
     public UILevel UILevel;
     public GameLevel GameLevel;
+    public PlayAgainLevel PlayAgain;
     public Controller1 controller1;
     public Controller2 controller2;
     //1158, 670
@@ -19,15 +21,17 @@ public class MyGame : Game
         controller2 = new Controller2();
         AddChild(controller2);
 
-        //LoadGameLevel("TestMap.tmx");
-        LoadCharecterSelect("CharecterSelect.tmx");
+        LoadStartLevel("StartScreen.tmx");
     }
 
     public void LoadGameLevel(string filename)
     {
         int char1 = CharacterSelect.manager.GetIndex1();
         int char2 = CharacterSelect.manager.GetIndex2();
-        CharacterSelect.Destroy();
+        if (StartScreen != null)
+            StartScreen.Destroy();
+        if (CharacterSelect != null)
+            CharacterSelect.Destroy();
         if (GameLevel != null)
             GameLevel.Destroy();
         GameLevel = new GameLevel(filename,char1,char2);
@@ -37,6 +41,14 @@ public class MyGame : Game
     }
     public void LoadCharecterSelect(string filename)
     {
+        if (StartScreen != null)
+            StartScreen.Destroy();
+        if (PlayAgain != null)
+            PlayAgain.Destroy();
+        if (UILevel != null)
+            UILevel.Destroy();
+        if (GameLevel != null)
+            GameLevel.Destroy();
         if (CharacterSelect != null)
             CharacterSelect.Destroy();
         CharacterSelect = new CharacterSelectLevel(filename);
@@ -49,6 +61,33 @@ public class MyGame : Game
             UILevel.Destroy();
         UILevel = new UILevel(filename);
         AddChild(UILevel);
+    }
+    public void LoadStartLevel(string filename)
+    {
+        if (PlayAgain != null)
+            PlayAgain.Destroy();
+        if (UILevel != null)
+            UILevel.Destroy();
+        if (GameLevel != null)
+            GameLevel.Destroy();
+        if (CharacterSelect != null)
+            CharacterSelect.Destroy();
+        StartScreen = new StartScreen(filename);
+        AddChild(StartScreen);
+    }
+
+    public void LoadPlayAgainLevel(string filename)
+    {
+        if (StartScreen != null)
+            StartScreen.Destroy();
+        if (UILevel != null)
+            UILevel.Destroy();
+        if (GameLevel != null)
+            GameLevel.Destroy();
+        if (CharacterSelect != null)
+            CharacterSelect.Destroy();
+        PlayAgain = new PlayAgainLevel(filename);
+        AddChild(PlayAgain);
     }
     public void LoadCurrentLevel()
     {

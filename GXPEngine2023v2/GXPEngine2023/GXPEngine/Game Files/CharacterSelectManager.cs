@@ -31,7 +31,7 @@ public class CharacterSelectManager : AnimationSprite
 
     public void AddImages(CharacterArt[] image)
     {
-       Images.AddRange(image);
+        Images.AddRange(image);
     }
     public int GetCharecterCount()
     {
@@ -61,41 +61,47 @@ public class CharacterSelectManager : AnimationSprite
 
     void AddInput1(int i)
     {
-        if (i == 1)
+        if (!select1)
         {
-            if (index1 > 0)
-                index1--;
-            else
-                index1 = GetCharecterCount();
+            if (i == 1)
+            {
+                if (index1 > 0)
+                    index1--;
+                else
+                    index1 = GetCharecterCount();
+            }
+            else if (i == 2)
+                if (index1 < GetCharecterCount())
+                    index1++;
+                else
+                    index1 = 0;
+            if (i == 3)
+                select1 = true;
         }
-        else if (i == 2)
-            if (index1 < GetCharecterCount())
-                index1++;
-            else
-                index1 = 0;
-        if (i == 3)
-            select1 = true;
-        if (i == 4)
+        else if (select1 && i == 3)
             select1 = false;
     }
 
     void AddInput2(int i)
     {
-        if (i == 1)
+        if (!select2)
         {
-            if (index2 > 0)
-                index2--;
-            else
-                index2 = GetCharecterCount();
+            if (i == 1)
+            {
+                if (index2 > 0)
+                    index2--;
+                else
+                    index2 = GetCharecterCount();
+            }
+            else if (i == 2)
+                if (index2 < GetCharecterCount())
+                    index2++;
+                else
+                    index2 = 0;
+            if (i == 3)
+                select2 = true;
         }
-        else if (i == 2)
-            if (index2 < GetCharecterCount())
-                index2++;
-            else
-                index2 = 0;
-        if (i == 3)
-            select2 = true;
-        if (i == 4)
+        else if (select2 && i == 3)
             select2 = false;
     }
 

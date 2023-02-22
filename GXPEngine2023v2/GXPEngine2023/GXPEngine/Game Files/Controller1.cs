@@ -69,8 +69,10 @@ public class Controller1 : Controller
             SecondaryGetInput(2);
         if (Input.GetKeyDown(Key.C))
             SecondaryGetInput(3);
-        if (Input.GetKeyDown(Key.V))
+        if (Input.GetKeyDown(Key.W))
             SecondaryGetInput(4);
+        if (Input.GetKeyDown(Key.S))
+            SecondaryGetInput(5);
 
     }
 
