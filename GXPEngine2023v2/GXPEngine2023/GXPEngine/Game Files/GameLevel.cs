@@ -50,9 +50,9 @@ public class GameLevel : Level
             a.AddGround(FindObjectsOfType<Ground>());
             a.AddWalls(FindObjectsOfType<Wall>());
             a.SetOpponent(players.Find(x => x != a));
+            a.level = this;
             a.HitConfirm += Pause;
             //a.TakeDamage += CheckPlayer;
-            a.level = this;
             AddChild(a);
         }
     }

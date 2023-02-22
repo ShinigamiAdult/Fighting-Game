@@ -132,209 +132,14 @@ public class Character : AnimationSprite
         AddChild(spark);
         spark.visible = false;
     }
-    protected virtual void SetStats()
-    {
-        MaxHealth = 700;
-        currentHealth = MaxHealth;
-        MaxPower = 500;
-        currentPower = 0;
-    }
-    void ResetHealth()
-    {
-        attacking = false;
-        grounded = false;
-        moving = false;
-        crouching = false;
-        hit = false;
-        block = false;
-        LookAtOpponent();
-        currentHealth = MaxHealth;
-        if (TakeDamage != null)
-            TakeDamage(currentHealth);
-    }
-    protected void GetCurrentAttack(AttackClass attack)
-    {
-        CurrentAttack = attack;
-    }
-    protected virtual void Initalize()
-    {
-        idle = new AnimationSprite("Assets/Test Animations/idle.png", 2, 1, 2, false, false);
-        idle.SetOrigin(idle.width / 2, idle.height / 2);
-        idle.SetCycle(0, 2, 16);
-        idle.SetXY(0, -8);
-        AddChild(idle);
-        idle.visible = false;
-
-        LightPunch = new AttackClass("Assets/Test Animations/punch2.png", 5, 1, 2, 2, 8, false);
-        LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
-        LightPunch.SetCycle(0, 5, 8);
-        LightPunch.SetXY(0, -8);
-        AddChild(LightPunch);
-        LightPunch.visible = false;
-
-        HardPunch = new AttackClass("Assets/Test Animations/punch1.png", 5, 1, 2, 2, 12, true);
-        HardPunch.SetOrigin(HardPunch.width / 2, HardPunch.height / 2);
-        HardPunch.SetCycle(0, 5, 8);
-        HardPunch.SetXY(0, -8);
-        AddChild(HardPunch);
-        HardPunch.visible = false;
-
-        Hit = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
-        Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 4);
-        Hit.SetXY(0, -8);
-        AddChild(Hit);
-        Hit.visible = false;
-
-        Block = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
-        Block.SetOrigin(Block.width / 2, Block.height / 2);
-        Block.SetCycle(0, 3, 4);
-        Block.SetXY(0, -8);
-        AddChild(Block);
-        Block.visible = false;
-
-        Walk = new AnimationSprite("Assets/Charecter 1/C1 Walk.png", 4, 1, 4, false, false);
-        Walk.SetOrigin(Walk.width / 2, Walk.height / 2);
-        Walk.SetCycle(0, 4, 4);
-        Walk.SetXY(0, -8);
-        AddChild(Walk);
-        Walk.visible = false;
-    }
-    protected void SetHurBox(float x, float y, float Sx, float Sy)
-    {
-        hurtBox.rotation = 0;
-        hurtBox.SetXY(x, y);
-        hurtBox.SetScaleXY(Sx, Sy);
-    }
-    protected void BaseHurtBox()
-    {
-        hurtBox.SetXY(0, 0);
-        hurtBox.SetScaleXY(0, 0);
-    }
-    protected void BasePlayerColl()
-    {
-        playerColl.SetScaleXY(2f, 5.5f);
-        playerColl.SetXY(0, 0f);
-    }
-    protected void SetAttackDmg(float dmg, float kn)
-    {
-        damage = dmg;
-        knock = kn;
-    }
-    protected void GotHit()
-    {
-        attacking = false;
-        if (Blocking() && !hit)
-        {
-            block = true;
-            Block.currentFrame = 0;
-            if (currentHealth - opponent.damage / 3 > 0)
-                currentHealth -= opponent.damage / 3;
-            else
-                while (currentHealth >= 0)
-                {
-                    currentHealth -= 0.1f;
-                }
-            if (currentPower + opponent.damage < MaxPower)
-                currentPower += opponent.damage;
-            else
-                while (currentPower < 500)
-                {
-                    currentPower += 0.1f;
-                }
-        }
-        else
-        {
-            hit = true;
-            Hit.currentFrame = 0;
-            if (currentHealth - opponent.damage > 0)
-                currentHealth -= opponent.damage;
-            else
-                while (currentHealth >= 0)
-                {
-                    currentHealth -= 0.1f;
-                }
-            if (currentPower + opponent.damage / 1.5f < MaxPower)
-                currentPower += opponent.damage / 1.5f;
-            else
-                while (currentPower < MaxPower)
-                {
-                    currentPower += 0.1f;
-                }
-            Vector2 a = new Vector2(0, -playerColl.height / 4);
-            spark.SetXY(a.x, a.y);
-            spark.currentFrame = 0;
-            spark.visible = true;
-        }
-
-        if (currentHealth <= 0)
-            current = State.Dead;
-        if (TakeDamage != null)
-            TakeDamage(currentHealth);
-        if (BarFill != null)
-            BarFill(currentPower);
-    }
-    public bool Blocking()
-    {
-        if ((scaleX > 0 && (LastInput() == 1 || LastInput() == 8)) || (scaleX < 0 && (LastInput() == 5 || LastInput() == 6)))
-            return true;
-        else
-            return false;
-    }
-    public void KnockBack()
-    {
-        vx = 0;
-        if (current == State.Block)
-        {
-            vx = scaleX < 0 ? opponent.knock / 2 : -opponent.knock / 2;
-            //opponent.knock -= vx;
-        }
-        else
-        {
-            vx = scaleX < 0 ? opponent.knock : -opponent.knock;
-            //opponent.knock -= vx;
-        }
-    }
-    protected virtual void SetVisible(AnimationSprite vis)
-    {
-        //Sets the current sprite based on state and animates it
-        if (!vis.visible)
-        {
-            Walk.visible = false;
-            Block.visible = false;
-            Hit.visible = false;
-            LightPunch.visible = false;
-            HardPunch.visible = false;
-            idle.visible = false;
-            vis.visible = true;
-        }
-        // some sprites should not repeat 
-        if ((vis == LightPunch || vis == HardPunch || vis == Hit || vis == Block) && vis.currentFrame == vis.frameCount - 1)
-        {
-            if ((vis == LightPunch || vis == LightKick || vis == HardPunch))
-            {
-                BaseHurtBox();
-                attacking = false;
-            }
-            if (vis == Hit && vis == Block)
-            {
-                Block.currentFrame = 0;
-                block = false;
-                Hit.currentFrame = 0;
-                hit = false;
-            }
-        }
-        else
-            vis.Animate();
-    }
-    protected virtual void SetState()
+    //Base Functionality
+    protected void SetState()
     {
         //Setes the player state
         switch (current)
         {
             case State.Jump:
                 {
-                    if (Jump != null)
                         SetVisible(Jump);
                 }
                 break;
@@ -364,22 +169,16 @@ public class Character : AnimationSprite
                 break;
             case State.Block:
                 {
-                    if (Block.currentFrame == Block.frameCount - 2)
-                    {
+                    if(Block.currentFrame == 1)
                         KnockBack();
-                    }
                     SetVisible(Block);
-
                 }
                 break;
             case State.Hit:
                 {
-                    if (Hit.currentFrame == Hit.frameCount - 2)
-                    {
+                    if (Hit.currentFrame == 1)
                         KnockBack();
-                    }
                     SetVisible(Hit);
-
                 }
                 break;
             case State.Dead:
@@ -400,15 +199,7 @@ public class Character : AnimationSprite
 
         }
     }
-    protected void GroundCheck()
-    {
-        //if (gravity < 10)
-        gravity += force;
-        if (grounded)
-            gravity = 0;
-        vy = gravity;
-    }
-    protected virtual void MoveInputs()
+    protected void MoveInputs()
     {
         //Left
         if (LastInput() == 1)
@@ -476,55 +267,6 @@ public class Character : AnimationSprite
             crouching = true;
         }
     }
-    protected virtual void AttackInputs()
-    {
-        //Console.WriteLine(ZMotionRight());
-        //To achive a motion input with attack use LastInput for attack
-        //Add hitbox changes
-        if (ValidInput(9))
-        {
-            //LPAttack();
-            //if(current == State.Jump)
-            //if(!grounded) jump attack (insert here)
-        }
-        else if (ValidInput(10))
-        {
-            //HPAttack();
-        }
-        /*else if (ValidInput(11))
-        {
-            LKAttack();
-            current = State.Attack;
-            attacking = true;
-        }
-        else if (ValidInput(12))
-        {
-            HKAttack();
-            current = State.Attack;
-            attacking = true;
-        }*/
-
-    }
-    protected void AttackCollision(AttackClass attack)
-    {
-        if (hurtBox.HitTest(opponent.playerColl) && opponent.CurrentAttack.GetState() != AttackClass.State.Active)
-        {
-            attack.Hit();
-            opponent.GotHit();
-            if (currentPower + damage * 2 < MaxPower)
-                currentPower += damage * 2;
-            else
-                while (currentPower < MaxPower)
-                {
-                    currentPower += 0.1f;
-                }
-            if (HitConfirm != null)
-                HitConfirm(CurrentAttack);
-
-            if (BarFill != null)
-                BarFill(currentPower);
-        }
-    }
     protected void UpdatePosition()
     {
         //Update position on Y
@@ -566,39 +308,258 @@ public class Character : AnimationSprite
         }
         if(LastInput() != 6 && LastInput() != 7 && LastInput() != 8)
             crouching = false;
-        if (!attacking)
             LookAtOpponent();
     }
-    protected void LookAtOpponent()
+    protected void Update()
     {
-        if (grounded && opponent.grounded && !hit && !hit)
-            scaleX = opponent.x > x ? Math.Abs(scaleX) : -Math.Abs(scaleX);
+        if (!level.pause)
+        {
+            UpdateInput();
+
+            if (!level.gameEnd && !level.roundBegin && !level.roundEnd)
+            {
+                if (grounded && !attacking && !hit && !block)
+                    MoveInputs();
+
+
+                if (!hit && !block && (!attacking || Cancelabel()))
+                    AttackInputs();
+            }
+
+            if (current != State.Crouch)
+            {
+                BasePlayerColl();
+            }
+            if (currentHealth <= 0)
+                current = State.Dead;
+            else if (hit)
+            {
+                current = State.Hit;
+            }
+            else if (block)
+            {
+                current = State.Block;
+            }
+            else if (attacking)
+            {
+                current = State.Attack;
+            }
+            else if (!grounded)
+            {
+                current = State.Jump;
+            }
+            else if (crouching)
+            {
+                current = State.Crouch;
+            }
+            else if (dashLeft)
+            {
+                if (scaleX < 0)
+                    current = State.DashForward;
+                else
+                    current = State.DashBackward;
+            }
+            else if (dashRight)
+            {
+                if (scaleX > 0)
+                    current = State.DashForward;
+                else
+                    current = State.DashBackward;
+            }
+            else if (moving)
+            {
+                current = State.Move;
+            }
+            else
+                current = State.Netural;
+            GroundCheck();
+            UpdatePosition();
+            SetState();
+        }
+        if (Input.GetKeyDown(Key.ONE))
+            playerColl.visible = !playerColl.visible;
+        if (Input.GetKeyDown(Key.TWO))
+            hurtBox.visible = !hurtBox.visible;
+        if (spark.currentFrame < spark.frameCount - 1)
+            spark.Animate();
     }
-    public State GetState()
+    //Shared
+    protected virtual void SetStats()
     {
-        return current;
+        MaxHealth = 700;
+        currentHealth = MaxHealth;
+        MaxPower = 500;
+        currentPower = 0;
     }
-    public void SetState(State state)
+    protected virtual void Initalize()
     {
-        current = state;
+        idle = new AnimationSprite("Assets/Test Animations/idle.png", 2, 1, 2, false, false);
+        idle.SetOrigin(idle.width / 2, idle.height / 2);
+        idle.SetCycle(0, 2, 16);
+        idle.SetXY(0, -8);
+        AddChild(idle);
+        idle.visible = false;
+
+        LightPunch = new AttackClass("Assets/Test Animations/punch2.png", 5, 1, 2, 2, 8, false);
+        LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
+        LightPunch.SetCycle(0, 5, 8);
+        LightPunch.SetXY(0, -8);
+        AddChild(LightPunch);
+        LightPunch.visible = false;
+
+        HardPunch = new AttackClass("Assets/Test Animations/punch1.png", 5, 1, 2, 2, 12, true);
+        HardPunch.SetOrigin(HardPunch.width / 2, HardPunch.height / 2);
+        HardPunch.SetCycle(0, 5, 8);
+        HardPunch.SetXY(0, -8);
+        AddChild(HardPunch);
+        HardPunch.visible = false;
+
+        Hit = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
+        Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
+        Hit.SetCycle(0, 3, 4);
+        Hit.SetXY(0, -8);
+        AddChild(Hit);
+        Hit.visible = false;
+
+        Block = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
+        Block.SetOrigin(Block.width / 2, Block.height / 2);
+        Block.SetCycle(0, 3, 4);
+        Block.SetXY(0, -8);
+        AddChild(Block);
+        Block.visible = false;
+
+        Walk = new AnimationSprite("Assets/Charecter 1/C1 Walk.png", 4, 1, 4, false, false);
+        Walk.SetOrigin(Walk.width / 2, Walk.height / 2);
+        Walk.SetCycle(0, 4, 4);
+        Walk.SetXY(0, -8);
+        AddChild(Walk);
+        Walk.visible = false;
     }
-    public void AddGround(GameObject[] ground)
+    protected virtual void AttackInputs()
     {
-        grounds.AddRange(ground);
+        //Console.WriteLine(ZMotionRight());
+        //To achive a motion input with attack use LastInput for attack
+        //Add hitbox changes
+        if (ValidInput(9))
+        {
+            //LPAttack();
+            //if(current == State.Jump)
+            //if(!grounded) jump attack (insert here)
+        }
+        else if (ValidInput(10))
+        {
+            //HPAttack();
+        }
+        /*else if (ValidInput(11))
+        {
+            LKAttack();
+            current = State.Attack;
+            attacking = true;
+        }
+        else if (ValidInput(12))
+        {
+            HKAttack();
+            current = State.Attack;
+            attacking = true;
+        }*/
+
     }
-    public void AddWalls(GameObject[] wall)
+    protected virtual void SetVisible(AnimationSprite vis)
     {
-        walls.AddRange(wall);
+        //Sets the current sprite based on state and animates it
+        if (!vis.visible)
+        {
+            DashBackwards.visible = false;
+            DashForward.visible = false;
+            JumpAttack.visible = false;
+            CrouchAttack.visible = false;
+            Crouch.visible = false;
+            Walk.visible = false;
+            Block.visible = false;
+            Hit.visible = false;
+            LightPunch.visible = false;
+            HardPunch.visible = false;
+            LightKick.visible = false;
+            Jump.visible = false;
+            idle.visible = false;
+            vis.visible = true;
+        }
+        // some sprites should not repeat 
+        if (vis.currentFrame == vis.frameCount - 1 && (vis is AttackClass || vis == Hit || vis == Block || vis == DashBackwards || vis == DashForward))
+        {
+            if (vis is AttackClass)
+            {
+                if (grounded)
+                    BaseHurtBox();
+                attacking = false;
+                vis.currentFrame = 0;
+                if (vis == CrouchAttack)
+                    crouching = true;
+                if (vis == JumpAttack && !grounded)
+                {
+                    vis.Animate();
+                    attacking = true;
+                }
+            }
+            if (vis == Hit || vis == Block)
+            {
+                Hit.currentFrame = 0;
+                hit = false;
+                Block.currentFrame = 0;
+                block = false;
+            }
+            if (vis == DashBackwards || vis == DashForward)
+            {
+                vis.currentFrame = 0;
+                dashLeft = false;
+                dashRight = false;
+            }
+
+        }
+        else
+            vis.Animate();
     }
-    public void AddInput(int i)
+    //Stats
+    public void ResetHealth()
     {
-        Inputs.Add(new PlayerInput(i));
-        Console.WriteLine(LastInput());
-        if (Inputs.Count == 20)
-            Inputs.RemoveAt(0);
-        if (parent != null && !opponent.attacking)
-            parent.AddChildAt(this, parent.GetChildCount() - 1);
+        attacking = false;
+        grounded = false;
+        moving = false;
+        crouching = false;
+        hit = false;
+        block = false;
+        LookAtOpponent();
+        currentHealth = MaxHealth;
+        if (TakeDamage != null)
+            TakeDamage(currentHealth);
     }
+    protected void SetHurBox(float x, float y, float Sx, float Sy)
+    {
+        hurtBox.rotation = 0;
+        hurtBox.SetXY(x, y);
+        hurtBox.SetScaleXY(Sx, Sy);
+    }
+    protected void BaseHurtBox()
+    {
+        hurtBox.SetXY(0, 0);
+        hurtBox.SetScaleXY(0, 0);
+    }
+    protected void BasePlayerColl()
+    {
+        playerColl.SetScaleXY(2f, 5.5f);
+        playerColl.SetXY(0, 0f);
+    }
+    protected void SetAttackDmg(float dmg, float kn)
+    {
+        damage = dmg;
+        knock = kn;
+    }
+    protected void Crouching()
+    {
+        playerColl.SetScaleXY(2f, 3f);
+        playerColl.SetXY(0, 35f);
+    }
+    //Input Checks
     protected bool ValidInput(int a)
     {
         PlayerInput c = Inputs.FindLast(x => x.GetKey() == a);
@@ -823,16 +784,105 @@ public class Character : AnimationSprite
         else
             return false;
     }
-    protected void Crouching()
+    //Battle Checks
+    protected void GotHit()
     {
-        playerColl.SetScaleXY(2f, 3f);
-        playerColl.SetXY(0, 35f);
+        attacking = false;
+        if (Blocking() && !hit)
+        {
+            block = true;
+            Block.currentFrame = 0;
+            if (currentHealth - opponent.damage / 3 > 0)
+                currentHealth -= opponent.damage / 3;
+            else
+                while (currentHealth >= 0)
+                {
+                    currentHealth -= 0.1f;
+                }
+            if (currentPower + opponent.damage < MaxPower)
+                currentPower += opponent.damage;
+            else
+                while (currentPower < 500)
+                {
+                    currentPower += 0.1f;
+                }
+        }
+        else
+        {
+            hit = true;
+            Hit.currentFrame = 0;
+            if (currentHealth - opponent.damage > 0)
+                currentHealth -= opponent.damage;
+            else
+                while (currentHealth >= 0)
+                {
+                    currentHealth -= 0.1f;
+                }
+            if (currentPower + opponent.damage / 1.5f < MaxPower)
+                currentPower += opponent.damage / 1.5f;
+            else
+                while (currentPower < MaxPower)
+                {
+                    currentPower += 0.1f;
+                }
+            Vector2 a = new Vector2(0, -playerColl.height / 4);
+            spark.SetXY(a.x, a.y);
+            spark.currentFrame = 0;
+            spark.visible = true;
+        }
+        if (TakeDamage != null)
+            TakeDamage(currentHealth);
+        if (BarFill != null)
+            BarFill(currentPower);
     }
-    public void SetOpponent(Character player)
+    public bool Blocking()
     {
-        opponent = player;
-        walls.Add(player.playerColl);
+        if ((scaleX > 0 && (LastInput() == 1 || LastInput() == 8)) || (scaleX < 0 && (LastInput() == 5 || LastInput() == 6)))
+            return true;
+        else
+            return false;
     }
+    protected void AttackCollision(AttackClass attack)
+    {
+        if (hurtBox.HitTest(opponent.playerColl) && opponent.CurrentAttack.GetState() != AttackClass.State.Active)
+        {
+            attack.Hit();
+            opponent.GotHit();
+            if (currentPower + damage * 2 < MaxPower)
+                currentPower += damage * 2;
+            else
+                while (currentPower < MaxPower)
+                {
+                    currentPower += 0.1f;
+                }
+            if (HitConfirm != null)
+                HitConfirm(CurrentAttack);
+
+            if (BarFill != null)
+                BarFill(currentPower);
+        }
+    }
+    protected void GroundCheck()
+    {
+        //if (gravity < 10)
+        gravity += force;
+        if (grounded)
+            gravity = 0;
+        vy = gravity;
+    }
+    protected void LookAtOpponent()
+    {
+        if (grounded && !hit && !block && !attacking)
+            scaleX = opponent.x > x ? Math.Abs(scaleX) : -Math.Abs(scaleX);
+    }
+    protected bool Cancelabel()
+    {
+        if ((CurrentAttack.Cancel() && CurrentAttack.GetState() == AttackClass.State.Recovery))
+            return true;
+        else
+            return false;
+    }
+    //Getters
     public AttackClass GetCurrentAttack()
     {
         return CurrentAttack;
@@ -841,82 +891,9 @@ public class Character : AnimationSprite
     {
         return opponent;
     }
-    public virtual void Update()
+    public State GetState()
     {
-        if (!level.pause)
-        {
-            UpdateInput();
-            if (current != State.Crouch)
-            {
-                BasePlayerColl();
-            }
-            if (!level.gameEnd && !level.roundBegin && !level.roundEnd)
-            {
-                if (grounded && !attacking && !hit && !block)
-                    MoveInputs();
-
-
-                if (!attacking && !hit && !block)
-                    AttackInputs();
-            }
-            if (currentHealth <= 0)
-                current = State.Dead;
-            else if (hit)
-            {
-                current = State.Hit;
-            }
-            else if (block)
-            {
-                current = State.Block;
-            }
-            else if (attacking)
-            {
-                current = State.Attack;
-            }
-            else if (!grounded)
-            {
-                current = State.Jump;
-            }
-            else if (crouching)
-            {
-                current = State.Crouch;
-            }
-            else if (dashLeft)
-            {
-                if (scaleX < 0)
-                    current = State.DashForward;
-                else
-                    current = State.DashBackward;
-            }
-            else if (dashRight)
-            {
-                if (scaleX > 0)
-                    current = State.DashForward;
-                else
-                    current = State.DashBackward;
-            }
-            else if (moving)
-            {
-                current = State.Move;
-            }
-            else
-                current = State.Netural;
-            GroundCheck();
-            UpdatePosition();
-            SetState();
-        }
-        if (Input.GetKeyDown(Key.ONE))
-            playerColl.visible = !playerColl.visible;
-        if (Input.GetKeyDown(Key.TWO))
-            hurtBox.visible = !hurtBox.visible;
-        if (spark.currentFrame < spark.frameCount - 1)
-            spark.Animate();
-    }
-    protected override void OnDestroy()
-    {
-        ((MyGame)game).controller1.ControllerInput1 -= AddInput;
-        ((MyGame)game).controller2.ControllerInput2 -= AddInput;
-        base.OnDestroy();
+        return current;
     }
     public float GetMaxHP()
     {
@@ -925,5 +902,58 @@ public class Character : AnimationSprite
     public float GetMaxSP()
     {
         return MaxPower;
+    }
+    //Setters
+    protected void SetCurrentAttack(AttackClass attack)
+    {
+        CurrentAttack = attack;
+    }
+    public void SetState(State state)
+    {
+        current = state;
+    }
+    public void AddGround(GameObject[] ground)
+    {
+        grounds.AddRange(ground);
+    }
+    public void AddWalls(GameObject[] wall)
+    {
+        walls.AddRange(wall);
+    }
+    public void AddInput(int i)
+    {
+        Inputs.Add(new PlayerInput(i));
+        Console.WriteLine(LastInput());
+        if (Inputs.Count == 20)
+            Inputs.RemoveAt(0);
+        if (parent != null && !opponent.attacking)
+            parent.AddChildAt(this, parent.GetChildCount() - 1);
+    }
+    public void SetOpponent(Character player)
+    {
+        opponent = player;
+        walls.Add(player.playerColl);
+    }
+    //Destroy
+    protected override void OnDestroy()
+    {
+        ((MyGame)game).controller1.ControllerInput1 -= AddInput;
+        ((MyGame)game).controller2.ControllerInput2 -= AddInput;
+        base.OnDestroy();
+    }
+    //Other
+    public void KnockBack()
+    {
+        vx = 0;
+        if (block)
+        {
+            vx = scaleX < 0 ? opponent.knock / 2 : -opponent.knock / 2;
+            //opponent.knock -= vx;
+        }
+        else
+        {
+            vx = scaleX < 0 ? opponent.knock : -opponent.knock;
+            //opponent.knock -= vx;
+        }
     }
 }

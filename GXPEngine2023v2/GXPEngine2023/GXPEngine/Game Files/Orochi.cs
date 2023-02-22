@@ -82,14 +82,14 @@ class Orochi : Character
 
         Hit = new AnimationSprite("Assets/Charecter 1/C1 Hit.png", 3, 1, 3, false, false);
         Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 16);
+        Hit.SetCycle(0, 3, 10);
         Hit.SetXY(0, -8);
         AddChild(Hit);
         Hit.visible = false;
 
         Block = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
         Block.SetOrigin(Block.width / 2, Block.height / 2);
-        Block.SetCycle(0, 3, 4);
+        Block.SetCycle(0, 3, 6);
         Block.SetXY(0, -8);
         AddChild(Block);
         Block.visible = false;
@@ -153,19 +153,13 @@ class Orochi : Character
                 vis.currentFrame = 0;
                 if (vis == CrouchAttack)
                     crouching = true;
-                if (vis == JumpAttack && !grounded)
-                {
-                    vis.Animate();
-                    attacking = true;
-                }
+                AttackClass temp = vis as AttackClass;
+                temp.ResetAttack();
             }
-            if (vis == Hit)
+            if (vis == Hit || vis == Block)
             {
                 Hit.currentFrame = 0;
                 hit = false;
-            }
-            if (vis == Block && opponent.GetCurrentAttack().GetState() == AttackClass.State.Recovery)
-            {
                 Block.currentFrame = 0;
                 block = false;
             }
@@ -183,7 +177,7 @@ class Orochi : Character
     void LPAttack()
     {
         LightPunch.ResetAttack();
-        GetCurrentAttack(LightPunch);
+        SetCurrentAttack(LightPunch);
         SetHurBox(60, -25, 2f, 1f);
         SetAttackDmg(20, 4);
         CurrentAttack = LightPunch;
@@ -192,20 +186,20 @@ class Orochi : Character
     void HPAttack()
     {
         HardPunch.ResetAttack();
-        GetCurrentAttack(HardPunch);
+        SetCurrentAttack(HardPunch);
         SetHurBox(60, -35, 2.5f, 1f);
         SetAttackDmg(30, 5);
         CurrentAttack = HardPunch;
         attacking = true;
         if (scaleX > 0)
-            vx += Horizontalspeed * 10;
+            vx += Horizontalspeed * 15;
         else
-            vx -= Horizontalspeed * 10;
+            vx -= Horizontalspeed * 15;
     }
     void LKAttack()
     {
         LightKick.ResetAttack();
-        GetCurrentAttack(LightKick);
+        SetCurrentAttack(LightKick);
         SetHurBox(80, -50, 1.5f, 0.7f);
         hurtBox.rotation = -40;
         SetAttackDmg(10, 3);
@@ -215,7 +209,7 @@ class Orochi : Character
     void CrouchingAttack()
     {
         CrouchAttack.ResetAttack();
-        GetCurrentAttack(CrouchAttack);
+        SetCurrentAttack(CrouchAttack);
         SetHurBox(70, 50, 1.5f, 1f);
         SetAttackDmg(10, 3);
         CurrentAttack = CrouchAttack;
@@ -224,7 +218,7 @@ class Orochi : Character
     void JumpingAttack()
     {
         JumpAttack.ResetAttack();
-        GetCurrentAttack(JumpAttack);
+        SetCurrentAttack(JumpAttack);
         SetHurBox(15, -10, 5f, 1.5f);
         SetAttackDmg(10, 3);
         CurrentAttack = JumpAttack;
@@ -246,15 +240,15 @@ class Orochi : Character
         }
         else if (ValidInput(11))
         {
-            if (!crouching && grounded)
+            if (!ValidInput(6) && !ValidInput(7) && !ValidInput(8) && grounded)
             {
                 LKAttack();
             }
-            else if (!grounded && !crouching && gravity > 0)
+            else if (!grounded && !crouching)
             {
                 JumpingAttack();
             }
-            else if (grounded && crouching)
+            else if (grounded && (ValidInput(6) || ValidInput(7) || ValidInput(8)))
             {
                 CrouchingAttack();
             }
