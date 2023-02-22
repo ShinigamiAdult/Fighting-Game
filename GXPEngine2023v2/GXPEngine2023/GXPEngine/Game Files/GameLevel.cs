@@ -34,7 +34,7 @@ public class GameLevel : Level
         loader.AddManualType();
         loader.LoadObjectGroups();
         AddPlayers(i, y);
-        RoundKO(120);
+        StartGame(120);
     }
     void AddPlayers(int i, int y)
     {
@@ -110,7 +110,7 @@ public class GameLevel : Level
         {
             if (a.GetState() == Character.State.Dead)
             {
-                RoundKO(180);
+                RoundKO(300);
                 if (a.GetOpponent() == players[0] && P1Round != 2)
                     P1Round++;
                 if (a.GetOpponent() == players[1] && P2Round != 2)
@@ -209,6 +209,18 @@ public class GameLevel : Level
     }
 
     void RoundKO(int i)
+    {
+        RoundCount++;
+        pausetime = i;
+        Texter = new Level("Announcment Maps/KORound.tmx", 0, 0);
+        int num = Utils.Random(1, 3);
+        Sound a = new Sound("Assets/Sound/VoiceLines/KO" + num + ".wav");
+        a.Play();
+        AddChild(Texter);
+        roundEnd = true;
+    }
+
+    void StartGame(int i)
     {
         RoundCount++;
         pausetime = i;

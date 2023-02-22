@@ -9,7 +9,7 @@ public class Character : AnimationSprite
     public event Action<AttackClass> HitConfirm;
     public event Action<float> TakeDamage;
     public event Action<float> BarFill;
-    public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit }
+    public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit,DashForward, DashBackward }
     protected State current;
     //Stats
     protected float gravity = 0;
@@ -29,6 +29,8 @@ public class Character : AnimationSprite
     protected bool crouching;
     protected bool hit;
     protected bool block;
+    protected bool dashLeft;
+    protected bool dashRight;
     //protected bool cornered;
     protected int attackCode;
 
@@ -44,11 +46,14 @@ public class Character : AnimationSprite
     //Inputs
     protected List<PlayerInput> Inputs = new List<PlayerInput>();
     //Animations
+    protected AnimationSprite Crouch;
     protected AnimationSprite Walk;
     protected AnimationSprite Block;
     protected AnimationSprite idle;
     protected AnimationSprite Hit;
     protected AnimationSprite Jump;
+    protected AnimationSprite DashForward;
+    protected AnimationSprite DashBackwards;
     protected AnimationSprite spark;
     //Attacks
     protected AttackClass LightPunch;
@@ -129,7 +134,7 @@ public class Character : AnimationSprite
     }
     protected virtual void SetStats()
     {
-        MaxHealth = 60;
+        MaxHealth = 700;
         currentHealth = MaxHealth;
         MaxPower = 500;
         currentPower = 0;
@@ -215,11 +220,6 @@ public class Character : AnimationSprite
     {
         damage = dmg;
         knock = kn;
-    }
-    protected virtual void ResetAttacks()
-    {
-        LightPunch.currentFrame = 0;
-        HardPunch.currentFrame = 0;
     }
     protected void GotHit()
     {
@@ -390,7 +390,7 @@ public class Character : AnimationSprite
             gravity = 0;
         vy = gravity;
     }
-    protected void MoveInputs()
+    protected virtual void MoveInputs()
     {
         //Left
         if (LastInput() == 1 && !block)
@@ -609,7 +609,7 @@ public class Character : AnimationSprite
         }
 
         //ground Check
-        if (grounded && !hit)
+        if (grounded && !hit && !block && !dashLeft && !dashRight)
         {
             vx = 0;
             moving = false;
@@ -872,6 +872,11 @@ public class Character : AnimationSprite
         else
             return false;
     }
+    protected void Crouching()
+    {
+        playerColl.SetScaleXY(2f, 3f);
+        playerColl.SetXY(0, 35f);
+    }
     public void SetOpponent(Character player)
     {
         opponent = player;
@@ -890,6 +895,10 @@ public class Character : AnimationSprite
         if (!level.pause)
         {
             UpdateInput();
+            if(current != State.Crouch)
+            {
+                BasePlayerColl();
+            }
             if (!level.gameEnd && !level.roundBegin && !level.roundEnd)
             {
                 if (grounded && !attacking && !hit && !block)
@@ -901,8 +910,26 @@ public class Character : AnimationSprite
                 if (attacking && !hit && !block)
                     OnAttack();
             }
-            if (!moving && !crouching && grounded && !attacking && !hit)
+            if (!moving && !crouching && grounded && !attacking && !hit && !dashLeft && !dashRight)
                 current = State.Netural;
+            if (grounded)
+            {
+                if (dashLeft)
+                {
+                    if (scaleX < 0)
+                        current = State.DashForward;
+                    else
+                        current = State.DashBackward;
+                }
+
+                if (dashRight)
+                {
+                    if (scaleX > 0)
+                        current = State.DashForward;
+                    else
+                        current = State.DashBackward;
+                }
+            }
             if (hit)
                 current = State.Hit;
             if (block)
