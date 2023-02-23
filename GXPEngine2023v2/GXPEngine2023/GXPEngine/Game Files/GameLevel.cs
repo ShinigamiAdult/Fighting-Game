@@ -16,11 +16,12 @@ public class GameLevel : Level
     int P1Round;
     int P2Round;
     Level Texter;
+    SoundChannel music;
     //Announcer Announcer;
     //bool respawn = false; used for smart respawn
     public GameLevel(string filename, int i, int y) : base(filename, i, y)
     {
-
+        music = new Sound("Assets/Sound/Music/Music1.wav", true).Play(false,0,0.1f);
     }
     public override void CreateLevel(int i, int y)
     {
@@ -100,7 +101,7 @@ public class GameLevel : Level
         if (b == 0)
             return new Orochi(assign);
         else if (b == 1)
-            return new Character(assign);
+            return new Momo(assign);
         else
             return new Character(assign);
     }
@@ -174,6 +175,7 @@ public class GameLevel : Level
     {
         if (pausetime == 0)
         {
+            music.IsPaused = true;
             ((MyGame)game).LoadPlayAgainLevel("PlayAgain.tmx");
         }
         if (pausetime > 0)

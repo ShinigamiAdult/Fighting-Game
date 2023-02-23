@@ -10,11 +10,13 @@ public class PlayAgainLevel : Level
     bool select1;
     bool select2;
     List<Button> buttons = new List<Button>();
+    SoundChannel music;
     //bool respawn = false; used for smart respawn
     public PlayAgainLevel(string filename) : base(filename, 0, 0)
     {
         ((MyGame)game).controller1.SecondaryControllerInput1 += AddInput1;
         ((MyGame)game).controller2.SecondaryControllerInput2 += AddInput2;
+        music = new Sound("Assets/Sound/Music/Music4.wav", true).Play(false,0,0.7f);
     }
 
     public override void CreateLevel(int i = 0, int y = 0)
@@ -37,10 +39,14 @@ public class PlayAgainLevel : Level
         {
             if (index1 && index2)
             {
+                music.IsPaused = true;
                 ((MyGame)game).LoadCharecterSelect("CharecterSelect.tmx");
             }
             else
+            {
+                music.IsPaused = true;
                 ((MyGame)game).LoadStartLevel("StartScreen.tmx");
+            }
         }
         if (index2)
         { 

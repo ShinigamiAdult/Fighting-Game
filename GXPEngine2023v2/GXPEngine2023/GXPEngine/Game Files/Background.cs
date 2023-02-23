@@ -6,5 +6,7 @@ public class Background : AnimationSprite
 {
     public Background(TiledObject obj = null) : base("Assets/Boxes/Box.png", 1, 1)
     {
+        alpha = obj.GetFloatProperty("alpha", 1f);
+        color = 0x000000;
     }
 }

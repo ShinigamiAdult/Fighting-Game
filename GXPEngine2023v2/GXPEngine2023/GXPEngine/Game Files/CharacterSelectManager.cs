@@ -8,13 +8,14 @@ public class CharacterSelectManager : AnimationSprite
 {
     List<CharacterIcon> characters = new List<CharacterIcon>();
     int index1;
-    int index2;
+    int index2 = 1;
     bool select1;
     bool select2;
     List<CharacterArt> Images = new List<CharacterArt>();
     Sound orochi;
     Sound momo;
     int delay = 120;
+    SoundChannel music;
     public CharacterSelectManager(TiledObject obj = null) : base("Assets/Boxes/HurtBox.png", 1, 1, -1, false, false)
     {
         alpha = 0;
@@ -22,6 +23,7 @@ public class CharacterSelectManager : AnimationSprite
         ((MyGame)game).controller2.SecondaryControllerInput2 += AddInput2;
         orochi = new Sound("Assets/Sound/VoiceLines/Kumagawa_Select.wav");
         momo = new Sound("Assets/Sound/VoiceLines/Momo_Select.wav");
+        music = new Sound("Assets/Sound/Music/Music4.wav",true).Play(false,0,0.7f);
     }
 
     public void AddCharaters(CharacterIcon[] charecter)
@@ -65,7 +67,10 @@ public class CharacterSelectManager : AnimationSprite
             delay--;
         }
         if (delay == 0)
+        {
+            music.IsPaused = true;
             ((MyGame)game).LoadGameLevel("TestMap.tmx");
+        }
 
     }
 

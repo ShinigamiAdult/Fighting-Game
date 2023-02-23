@@ -14,6 +14,7 @@ public class CharacterIcon : AnimationSprite
         string filename = obj.GetStringProperty("image", "Assets/Boxes/HurtBox.png");
         sprite = new AnimationSprite(filename, 1, 1, -1, false, false);
         sprite.SetOrigin(sprite.width / 2, sprite.height / 2);
+        sprite.SetScaleXY(0.5f);
         AddChild(sprite);
         p1 = new Sprite("Assets/Boxes/Player1.png");
         p1.SetScaleXY(0.5f);

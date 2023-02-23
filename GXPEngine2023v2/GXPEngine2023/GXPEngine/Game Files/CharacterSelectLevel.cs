@@ -8,10 +8,12 @@ using TiledMapParser;
 public class CharacterSelectLevel : Level
 {
     public CharacterSelectManager manager;
+
     public CharacterSelectLevel(string filename) : base(filename,0,0)
     {
         Sound charSelect = new Sound("Assets/Sound/VoiceLines/ChareterSelect.wav");
         charSelect.Play();
+
         //Console.WriteLine("Game Width: " + game.width);
     }
 

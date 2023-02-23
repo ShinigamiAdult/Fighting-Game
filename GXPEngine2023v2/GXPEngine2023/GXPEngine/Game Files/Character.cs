@@ -9,7 +9,7 @@ public class Character : AnimationSprite
     public event Action<AttackClass> HitConfirm;
     public event Action<float> TakeDamage;
     public event Action<float> BarFill;
-    public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit,DashForward, DashBackward }
+    public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit, DashForward, DashBackward, Knockdown }
     protected State current;
     //Stats
     protected float gravity = 0;
@@ -22,6 +22,7 @@ public class Character : AnimationSprite
     protected float currentPower;
     protected float damage;
     public float knock;
+    public float knockY;
     //Checkings
     protected bool grounded;
     protected bool attacking;
@@ -31,7 +32,8 @@ public class Character : AnimationSprite
     protected bool block;
     protected bool dashLeft;
     protected bool dashRight;
-    //protected bool cornered;
+    protected bool knockdown;
+    protected bool cornered;
     protected int attackCode;
 
     //Positoning
@@ -54,6 +56,7 @@ public class Character : AnimationSprite
     protected AnimationSprite Jump;
     protected AnimationSprite DashForward;
     protected AnimationSprite DashBackwards;
+    protected AnimationSprite KnockDown;
     protected AnimationSprite spark;
     //Attacks
     protected AttackClass LightPunch;
@@ -63,6 +66,7 @@ public class Character : AnimationSprite
     protected AttackClass CrouchAttack;
     protected AttackClass JumpAttack;
     protected AttackClass SpecialAttack;
+    protected AttackClass SpecialAttack2;
     protected AttackClass UltimateAttack;
 
     protected AttackClass CurrentAttack;
@@ -140,7 +144,14 @@ public class Character : AnimationSprite
         {
             case State.Jump:
                 {
-                        SetVisible(Jump);
+                    SetVisible(Jump);
+                }
+                break;
+            case State.Knockdown:
+                {
+                    SetVisible(KnockDown);
+                    //if(!grounded)
+                    //KnockBack();
                 }
                 break;
             case State.Crouch:
@@ -156,6 +167,7 @@ public class Character : AnimationSprite
                 break;
             case State.Attack:
                 {
+                    AttackAddition();
                     SetVisible(CurrentAttack);
                     if (CurrentAttack.FrameValidation())
                         AttackCollision(CurrentAttack);
@@ -169,14 +181,14 @@ public class Character : AnimationSprite
                 break;
             case State.Block:
                 {
-                    if(Block.currentFrame == 1)
+                    if (Block.currentFrame == 0)
                         KnockBack();
                     SetVisible(Block);
                 }
                 break;
             case State.Hit:
                 {
-                    if (Hit.currentFrame == 1)
+                    if (Hit.currentFrame == 0)
                         KnockBack();
                     SetVisible(Hit);
                 }
@@ -274,6 +286,7 @@ public class Character : AnimationSprite
         if (coll != null)
         {
             grounded = true;
+            knockdown = false;
         }
 
         if (playerColl.HitTest(opponent) && !grounded)
@@ -306,9 +319,9 @@ public class Character : AnimationSprite
             vx = 0;
             moving = false;
         }
-        if(LastInput() != 6 && LastInput() != 7 && LastInput() != 8)
+        if (LastInput() != 6 && LastInput() != 7 && LastInput() != 8)
             crouching = false;
-            LookAtOpponent();
+        LookAtOpponent();
     }
     protected void Update()
     {
@@ -318,11 +331,11 @@ public class Character : AnimationSprite
 
             if (!level.gameEnd && !level.roundBegin && !level.roundEnd)
             {
-                if (grounded && !attacking && !hit && !block)
+                if (grounded && !attacking && !hit && !block && !knockdown)
                     MoveInputs();
 
 
-                if (!hit && !block && (!attacking || Cancelabel()))
+                if (!knockdown && !hit && !block && (!attacking || Cancelabel()))
                     AttackInputs();
             }
 
@@ -335,6 +348,10 @@ public class Character : AnimationSprite
             else if (hit)
             {
                 current = State.Hit;
+            }
+            else if (knockdown)
+            {
+                current = State.Knockdown;
             }
             else if (block)
             {
@@ -519,6 +536,10 @@ public class Character : AnimationSprite
         else
             vis.Animate();
     }
+    protected virtual void AttackAddition()
+    {
+
+    }
     //Stats
     public void ResetHealth()
     {
@@ -549,10 +570,11 @@ public class Character : AnimationSprite
         playerColl.SetScaleXY(2f, 5.5f);
         playerColl.SetXY(0, 0f);
     }
-    protected void SetAttackDmg(float dmg, float kn)
+    protected void SetAttackDmg(float dmg, float kn, float y = 0)
     {
         damage = dmg;
         knock = kn;
+        knockY = y;
     }
     protected void Crouching()
     {
@@ -785,6 +807,7 @@ public class Character : AnimationSprite
             return false;
     }
     //Battle Checks
+    //if knock causes bug you can implement the knock from here
     protected void GotHit()
     {
         attacking = false;
@@ -944,16 +967,27 @@ public class Character : AnimationSprite
     //Other
     public void KnockBack()
     {
+        //vy = 0;
         vx = 0;
         if (block)
         {
             vx = scaleX < 0 ? opponent.knock / 2 : -opponent.knock / 2;
-            //opponent.knock -= vx;
         }
         else
         {
             vx = scaleX < 0 ? opponent.knock : -opponent.knock;
-            //opponent.knock -= vx;
+            if (!grounded && opponent.knockY == 0)
+            {
+                gravity = -5;
+                knockdown = true;
+            }
+            else
+            {
+                gravity = -opponent.knockY;
+                knockdown = true;
+            }
+
+            grounded = false;
         }
     }
 }

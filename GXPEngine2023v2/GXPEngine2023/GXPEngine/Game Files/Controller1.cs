@@ -8,6 +8,10 @@ public class Controller1 : Controller
 {
     public event Action<int> ControllerInput1;
     public event Action<int> SecondaryControllerInput1;
+    public Controller1() : base()
+    {
+
+    }
     public override void CotrollerInputs()
     {
         if (Input.GetKeyUp(Key.A) || Input.GetKeyUp(Key.D) || Input.GetKeyUp(Key.S) || Input.GetKeyUp(Key.W))
@@ -65,12 +69,16 @@ public class Controller1 : Controller
         //Secondary Inputs
         if (Input.GetKeyDown(Key.A))
             SecondaryGetInput(1);
+  
         if (Input.GetKeyDown(Key.D))
             SecondaryGetInput(2);
+
         if (Input.GetKeyDown(Key.C))
             SecondaryGetInput(3);
+
         if (Input.GetKeyDown(Key.W))
             SecondaryGetInput(4);
+
         if (Input.GetKeyDown(Key.S))
             SecondaryGetInput(5);
 
@@ -85,6 +93,20 @@ public class Controller1 : Controller
     void SecondaryGetInput(int i)
     {
         if (SecondaryControllerInput1 != null)
+        {
+            if (i == 1 || i == 2)
+            {
+                click1.Play();
+            }
+            if (i == 4 || i == 5)
+            {
+                click2.Play();
+            }
+            if (i == 3)
+            {
+                click3.Play();
+            }
             SecondaryControllerInput1(i);
+        }
     }
 }

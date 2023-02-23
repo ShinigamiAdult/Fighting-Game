@@ -43,9 +43,10 @@ public class AttackClass : AnimationSprite
         current = State.None;
     }
 
-    public void ResetHit()
+    public void ResetHit(int frame)
     {
         hit = false;
+        validFrame = frame;
     }
 
     public void Hit()

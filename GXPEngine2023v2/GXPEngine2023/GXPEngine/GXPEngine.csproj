@@ -58,6 +58,7 @@
     <Compile Include="Game Files\PlayerColl.cs" />
     <Compile Include="Game Files\SPBar.cs" />
     <Compile Include="Game Files\StartScreen.cs" />
+    <Compile Include="Game Files\Susano.cs" />
     <Compile Include="Game Files\TestAnimation.cs" />
     <Compile Include="Game Files\UILevel.cs" />
     <Compile Include="Game Files\Wall.cs" />
