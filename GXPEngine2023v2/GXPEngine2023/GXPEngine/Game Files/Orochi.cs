@@ -267,14 +267,9 @@ class Orochi : Character
         {
             HKAttack();
         }
-        //if (DoubleQuarterCircleForward() && (LastInput() == 10 || LastInput() == 9) && currentPower >= MaxPower)
-        if(Input.GetKeyDown(Key.T))
+        if (DoubleQuarterCircleForward() && (LastInput() == 10 || LastInput() == 9) && currentPower >= MaxPower)
         {
             UltAttack();
-        }
-        if (Input.GetKeyDown(Key.B))
-        {
-            SPAttack();
         }
         else if (ZMotionForward() && (LastInput() == 10 || LastInput() == 9))
         {

@@ -232,6 +232,7 @@ class Momo : Character
         SetPlayerColl(30, 20, 2f, 4f);
         playerColl.rotation = 50;
         attacking = true;
+        ResetSpBar();
         TriggerSuper(true);
     }
     protected override void AttackInputs()
@@ -268,19 +269,11 @@ class Momo : Character
             HKAttack();
         }
 
-        if (DoubleDown() && (LastInput() == 10 || LastInput() == 9))
-            SPAttack();
-
-        if (Input.GetKeyDown(Key.Y))
-        {
+        if (DoubleQuarterCircleBackwards() && (LastInput() == 11 || LastInput() == 12) && currentPower >= MaxPower)
             UltAttack();
-        }
-        if (Input.GetKeyDown(Key.U))
-        {         
+        else if (DoubleDown() && (LastInput() == 10 || LastInput() == 9))
             SPAttack();
-        }
     }
-
     protected override void AttackAddition()
     {
         if(CurrentAttack == LightPunch)

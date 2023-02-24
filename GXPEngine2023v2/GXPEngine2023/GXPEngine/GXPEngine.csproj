@@ -64,6 +64,7 @@
     <Compile Include="Game Files\StartScreen.cs" />
     <Compile Include="Game Files\Momo.cs" />
     <Compile Include="Game Files\TestAnimation.cs" />
+    <Compile Include="Game Files\Timer.cs" />
     <Compile Include="Game Files\UILevel.cs" />
     <Compile Include="Game Files\Wall.cs" />
     <Compile Include="GXPEngine\AddOns\Gizmos.cs" />

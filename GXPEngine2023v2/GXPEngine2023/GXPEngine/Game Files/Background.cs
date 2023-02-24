@@ -5,7 +5,7 @@ using TiledMapParser;
 public class Background : AnimationSprite
 {
     int time;
-    public Background(TiledObject obj = null) : base("Assets/Boxes/Box.png", 1, 1)
+    public Background(TiledObject obj = null) : base("Assets/Boxes/Box.png", 1, 1,-1,false,false)
     {
         if (obj != null)
         {

@@ -1022,6 +1022,10 @@ public class Character : AnimationSprite
         return currentHealth;
     }
     //Setters
+    public void Kill()
+    {
+        currentHealth = 0;
+    }
     protected void SetCurrentAttack(AttackClass attack)
     {
         CurrentAttack = attack;

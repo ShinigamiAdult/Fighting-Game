@@ -27,6 +27,7 @@ public class UILevel : Level
         Console.WriteLine("lenght " + ((MyGame)game).GameLevel.indi.Length);
         SPBar[] sPbars = FindObjectsOfType<SPBar>();
         ((MyGame)game).GameLevel.pauseScreen = FindObjectOfType<PauseScreen>();
+        ((MyGame)game).GameLevel.timer = FindObjectOfType<Timer>();
         sPbars[0].SetUpBar(players[0]);
         sPbars[1].SetUpBar(players[1]);
         List<SmallCharacterArt> icons = new List<SmallCharacterArt>();

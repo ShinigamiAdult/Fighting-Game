@@ -8,6 +8,9 @@ public class GameLevel : Level
     public List<Character> players = new List<Character>();
     Character Hitter;
     Background background;
+    public Timer timer;
+    int millis;
+    int time = 99;
     public PauseScreen pauseScreen;
     public bool pause;
     public bool roundEnd = false;
@@ -21,13 +24,15 @@ public class GameLevel : Level
     Level Texter;
     SoundChannel music;
     public Indication[] indi = new Indication[4];
+    Sound[] win = new Sound[2];
     //Announcer Announcer;
     //bool respawn = false; used for smart respawn
     public GameLevel(string filename, int i, int y) : base(filename, i, y)
     {
         music = new Sound("Assets/Sound/Music/Music1.wav", true).Play(false, 0, 0.2f);
-        Console.WriteLine("P1Rounds: " + P1Round);
-        Console.WriteLine("P2Rounds: " + P2Round);
+        millis = time * 1000;
+        win[0] = new Sound("Assets/Sound/SFX/SE_00020.wav");
+        win[1] = new Sound("Assets/Sound/SFX/SE_00021.wav");
     }
     public override void CreateLevel(int i, int y)
     {
@@ -78,7 +83,33 @@ public class GameLevel : Level
     }
     void Update()
     {
-        if(Input.GetKeyDown(Key.P))
+        if (!pause && !roundEnd && !roundBegin && !gameEnd)
+        {
+            millis -= Time.deltaTime;
+            if (millis / 1000 <= time)
+            {
+                if (time > 0)
+                    time--;
+                timer.Update1(time);
+            }
+            if (time == 0)
+            {
+                if (players[0].GetcurrentHP() > players[1].GetcurrentHP())
+                {
+                    players[1].Kill();
+                }
+                else if (players[0].GetcurrentHP() < players[1].GetcurrentHP())
+                {
+                    players[0].Kill();
+                }
+                else
+                {
+                    players[Utils.Random(0, 2)].Kill();
+                }
+                CheckPlayer(0);
+            }
+        }
+        if (Input.GetKeyDown(Key.P))
         {
             pauseScreen.visible = !pauseScreen.visible;
             if (pauseScreen.visible == true)
@@ -131,22 +162,27 @@ public class GameLevel : Level
                     if (a.GetOpponent() == players[0] && P1Round != 2)
                     {
                         P1Round++;
-                        Console.WriteLine("P1Rounds: " + P1Round);
-                        indi[P1Round - 1].RoundWon();
                     }
                     if (a.GetOpponent() == players[1] && P2Round != 2)
                     {
-
                         P2Round++;
-                        Console.WriteLine("P2Rounds: " + P2Round);
-                        indi[P2Round + 1].RoundWon();
                     }
+                    time = 99;
+                    millis = time * 1000;
                     break;
                 }
             }
     }
     void RoundEnd()
     {
+        if (delay == 180)
+        {
+            if (P1Round > 0)
+                indi[P1Round - 1].RoundWon();
+            if (P2Round > 0)
+                indi[P2Round + 1].RoundWon();
+            win[Utils.Random(0, 2)].Play();
+        }
         if (delay == 120)
         {
             RemoveChild(Texter);

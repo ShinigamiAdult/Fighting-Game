@@ -11,6 +11,7 @@ public class PlayAgainLevel : Level
     bool select2 = false;
     List<Button> buttons = new List<Button>();
     SoundChannel music;
+    int delay = 30;
     //bool respawn = false; used for smart respawn
     public PlayAgainLevel(string filename) : base(filename, 0, 0)
     {
@@ -35,7 +36,11 @@ public class PlayAgainLevel : Level
 
     void Update()
     {
-        if(select1 && select2)
+        if (select1 && select2)
+        {
+            delay--;
+        }
+        if (delay == 0)
         {
             if (index1 && index2)
             {
@@ -48,6 +53,7 @@ public class PlayAgainLevel : Level
                 ((MyGame)game).LoadStartLevel("StartScreen.tmx");
             }
         }
+
         if (index2)
         { 
             buttons[3].visible = true;
