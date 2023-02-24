@@ -54,12 +54,17 @@ public class CharacterSelectManager : AnimationSprite
             {
                 characters[i].P1Vis();
                 Images[0].ShowImage(i);
+                if(select1)
+                    Images[0].Flicker(i);
             }
 
             if (index2 == i)
             {
                 characters[i].P2Vis();
                 Images[1].ShowImage(i);
+                if (select2)
+                    Images[1].Flicker(i);
+                Images[1].FlipText();
             }
         }
         if (select1 && select2)
@@ -69,7 +74,8 @@ public class CharacterSelectManager : AnimationSprite
         if (delay == 0)
         {
             music.IsPaused = true;
-            ((MyGame)game).LoadGameLevel("TestMap.tmx");
+            int a = Utils.Random(1, 4);
+            ((MyGame)game).LoadGameLevel("Map"+ a +".tmx");
         }
 
     }
@@ -92,6 +98,7 @@ public class CharacterSelectManager : AnimationSprite
                     index1 = 0;
             if (i == 3)
             {
+                Images[0].SetTime();
                 select1 = true;
                 if (index1 == 0)
                     orochi.Play();
@@ -100,7 +107,10 @@ public class CharacterSelectManager : AnimationSprite
             }
         }
         else if (select1 && i == 3)
+        {
+            Images[0].DeSelect(index1);
             select1 = false;
+        }
     }
 
     void AddInput2(int i)
@@ -121,6 +131,7 @@ public class CharacterSelectManager : AnimationSprite
                     index2 = 0;
             if (i == 3)
             {
+                Images[1].SetTime();
                 select2 = true;
                 if (index2 == 0)
                     orochi.Play();
@@ -129,7 +140,10 @@ public class CharacterSelectManager : AnimationSprite
             }
         }
         else if (select2 && i == 3)
+        {
+            Images[1].DeSelect(index2);
             select2 = false;
+        }
     }
 
     public int GetIndex1()
@@ -148,4 +162,6 @@ public class CharacterSelectManager : AnimationSprite
         ((MyGame)game).controller2.SecondaryControllerInput2 -= AddInput2;
         base.OnDestroy();
     }
+
+    
 }

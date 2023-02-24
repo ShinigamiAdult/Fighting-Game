@@ -29,7 +29,6 @@ public class StartScreen : Level
         loader.addColliders = true;
         loader.LoadObjectGroups();
     }*/
-
     void Update()
     {
         if(Input.GetKeyDown(Key.P) && delay == 0)

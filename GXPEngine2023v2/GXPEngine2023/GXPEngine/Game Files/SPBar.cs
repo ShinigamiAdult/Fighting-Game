@@ -43,12 +43,12 @@ class SPBar : AnimationSprite
     public void SetUpBar(Character player)
     {
         player.BarFill += UIUpdate;
-        sp1 = fill.scaleX / player.GetMaxSP();
-        fill.SetScaleXY(0, 1);
+        sp1 = (fill.scaleX - fill.scaleX * 0.15f) / player.GetMaxSP();
+        fill.SetScaleXY(0.15f, 1);
     }
     public void UIUpdate(float Chp)
     {
-        fill.SetScaleXY(sp1 * Chp, 1);
+        fill.SetScaleXY(0.15f+sp1 * Chp, 1);
     }
 
     protected override void OnDestroy()

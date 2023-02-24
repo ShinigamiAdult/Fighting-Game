@@ -23,8 +23,15 @@ public class UILevel : Level
         loader.LoadObjectGroups();
 
         List<Character> players = ((MyGame)game).GameLevel.players;
+        ((MyGame)game).GameLevel.indi = FindObjectsOfType<Indication>();
+        Console.WriteLine("lenght " + ((MyGame)game).GameLevel.indi.Length);
         SPBar[] sPbars = FindObjectsOfType<SPBar>();
+        ((MyGame)game).GameLevel.pauseScreen = FindObjectOfType<PauseScreen>();
         sPbars[0].SetUpBar(players[0]);
         sPbars[1].SetUpBar(players[1]);
+        List<SmallCharacterArt> icons = new List<SmallCharacterArt>();
+        icons.AddRange(FindObjectsOfType<SmallCharacterArt>());
+        icons[0].ShowImage(players[0]);
+        icons[1].ShowImage(players[1]);
     }
 }

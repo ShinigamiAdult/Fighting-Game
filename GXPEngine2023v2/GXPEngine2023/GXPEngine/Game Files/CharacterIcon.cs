@@ -16,6 +16,7 @@ public class CharacterIcon : AnimationSprite
         sprite.SetOrigin(sprite.width / 2, sprite.height / 2);
         sprite.SetScaleXY(0.5f);
         AddChild(sprite);
+
         p1 = new Sprite("Assets/Boxes/Player1.png");
         p1.SetScaleXY(0.5f);
         p1.SetXY(-width/2+p1.width/4 - 1,height/2-p1.height-0);

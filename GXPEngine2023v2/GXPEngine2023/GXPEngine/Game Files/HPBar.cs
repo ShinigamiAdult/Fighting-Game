@@ -43,11 +43,11 @@ class HPBar : AnimationSprite
     public void SetUpBar(Character player)
     {
         player.TakeDamage += UIUpdate;
-        hp1 = fill.scaleX / player.GetMaxHP();
+        hp1 = (fill.scaleX - fill.scaleX * 0.13f)/ player.GetMaxHP();
     }
     public void UIUpdate(float Chp)
     {
-        fill.SetScaleXY(hp1 * Chp, 1);
+        fill.SetScaleXY(0.13f+hp1 * Chp, 1);
     }
 
     protected override void OnDestroy()

@@ -48,7 +48,10 @@
     <Compile Include="Game Files\Ground.cs" />
     <Compile Include="Game Files\HPBar.cs" />
     <Compile Include="Game Files\HurtBox.cs" />
+    <Compile Include="Game Files\Indication.cs" />
+    <Compile Include="Game Files\InsertCoin.cs" />
     <Compile Include="Game Files\Orochi.cs" />
+    <Compile Include="Game Files\PauseScreen.cs" />
     <Compile Include="Game Files\PlayAgainLevel.cs" />
     <Compile Include="Game Files\PlayerInput.cs" />
     <Compile Include="Game Files\Level.cs" />
@@ -56,9 +59,10 @@
     <Compile Include="Game Files\Controller.cs" />
     <Compile Include="Game Files\Controller1.cs" />
     <Compile Include="Game Files\PlayerColl.cs" />
+    <Compile Include="Game Files\SmallCharacterArt.cs" />
     <Compile Include="Game Files\SPBar.cs" />
     <Compile Include="Game Files\StartScreen.cs" />
-    <Compile Include="Game Files\Susano.cs" />
+    <Compile Include="Game Files\Momo.cs" />
     <Compile Include="Game Files\TestAnimation.cs" />
     <Compile Include="Game Files\UILevel.cs" />
     <Compile Include="Game Files\Wall.cs" />

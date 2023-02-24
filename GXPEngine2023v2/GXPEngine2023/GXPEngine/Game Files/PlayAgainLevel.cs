@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using TiledMapParser;
 public class PlayAgainLevel : Level
 {
-    bool index1;
-    bool index2;
-    bool select1;
-    bool select2;
+    bool index1 = true;
+    bool index2 = true;
+    bool select1 = false;
+    bool select2 = false;
     List<Button> buttons = new List<Button>();
     SoundChannel music;
     //bool respawn = false; used for smart respawn
@@ -50,24 +50,24 @@ public class PlayAgainLevel : Level
         }
         if (index2)
         { 
-            buttons[1].visible = true;
-            buttons[3].visible = false;
+            buttons[3].visible = true;
+            buttons[1].visible = false;
         }
         else
         {
-            buttons[3].visible = true;
-            buttons[1].visible = false;
+            buttons[1].visible = true;
+            buttons[3].visible = false;
         }
 
         if (index1)
         {
-            buttons[0].visible = true;
-            buttons[2].visible = false;
+            buttons[2].visible = true;
+            buttons[0].visible = false;
         }
         else
         {
-            buttons[2].visible = true;
-            buttons[0].visible = false;
+            buttons[0].visible = true;
+            buttons[2].visible = false;
         }
     }
 
@@ -87,6 +87,7 @@ public class PlayAgainLevel : Level
         }
         else if (select1 && i == 3)
             select1 = false;
+        Console.WriteLine("Index1: " + index1);
     }
     void AddInput2(int i)
     {
@@ -104,6 +105,7 @@ public class PlayAgainLevel : Level
         }
         else if  (select2 && i == 3)
             select2 = false;
+        Console.WriteLine("Index2: " + index2);
     }
 
     protected override void OnDestroy()

@@ -9,6 +9,7 @@ public class Character : AnimationSprite
     public event Action<AttackClass> HitConfirm;
     public event Action<float> TakeDamage;
     public event Action<float> BarFill;
+    public event Action<bool> Super;
     public enum State { Jump, Crouch, Netural, Move, Block, Attack, Dead, Hit, DashForward, DashBackward, Knockdown }
     protected State current;
     //Stats
@@ -35,6 +36,9 @@ public class Character : AnimationSprite
     protected bool knockdown;
     protected bool cornered;
     protected int attackCode;
+    protected Sound specialSound;
+    protected Sound ultSound;
+    protected Sound[] sHit = new Sound[9];
 
     //Positoning
     protected float vy; // Update first this then use it to do Move until collision
@@ -51,13 +55,14 @@ public class Character : AnimationSprite
     protected AnimationSprite Crouch;
     protected AnimationSprite Walk;
     protected AnimationSprite Block;
-    protected AnimationSprite idle;
+    protected AnimationSprite Idle;
     protected AnimationSprite Hit;
     protected AnimationSprite Jump;
     protected AnimationSprite DashForward;
     protected AnimationSprite DashBackwards;
     protected AnimationSprite KnockDown;
-    protected AnimationSprite spark;
+    protected AnimationSprite Dead;
+    public AnimationSprite spark;
     //Attacks
     protected AttackClass LightPunch;
     protected AttackClass HardPunch;
@@ -71,39 +76,6 @@ public class Character : AnimationSprite
 
     protected AttackClass CurrentAttack;
     public GameLevel level;
-    public Character(TiledObject obj = null) : base("Assets/Test Animations/Chare.png", 1, 1, -1)
-    {
-        bool assign = obj.GetBoolProperty("Input", true);
-        if (assign)
-            ((MyGame)game).controller1.ControllerInput1 += AddInput;
-        else
-            ((MyGame)game).controller2.ControllerInput2 += AddInput;
-        for (int i = 0; i < 10; i++)
-        {
-            AddInput(0);
-        }
-        SetOrigin(width / 2, height / 2);
-        alpha = 0;
-
-        Initalize();
-        CurrentAttack = LightPunch;
-        playerColl = new PlayerColl();
-        playerColl.visible = false;
-        playerColl.SetScaleXY(2f, 5.5f);
-        playerColl.SetXY(0, 0f);
-        AddChild(playerColl);
-
-        hurtBox = new HurtBox();
-        hurtBox.visible = false;
-        BaseHurtBox();
-        AddChild(hurtBox);
-
-        spark = new AnimationSprite("Assets/VFX/Hit.png", 7, 1, 7, false, false);
-        spark.SetCycle(0, 2, 2);
-        AddChild(spark);
-        spark.currentFrame = spark.frameCount - 1;
-        spark.visible = false;
-    }
     public Character(bool assign) : base("Assets/Test Animations/Chare.png", 1, 1, -1)
     {
         if (assign)
@@ -132,9 +104,19 @@ public class Character : AnimationSprite
 
         spark = new AnimationSprite("Assets/VFX/Hit.png", 7, 1, 7, false, false);
         spark.SetOrigin(spark.width / 2, spark.height / 2);
-        spark.SetCycle(0, 7, 4);
+        spark.SetCycle(0, 7, 2);
         AddChild(spark);
         spark.visible = false;
+
+        sHit[0] = new Sound("Assets/Sound/SFX/SE_00007.wav");
+        sHit[1] = new Sound("Assets/Sound/SFX/SE_00008.wav");
+        sHit[2] = new Sound("Assets/Sound/SFX/SE_00009.wav");
+        sHit[3] = new Sound("Assets/Sound/SFX/SE_00010.wav");
+        sHit[4] = new Sound("Assets/Sound/SFX/SE_00011.wav");
+        sHit[5] = new Sound("Assets/Sound/SFX/SE_00012.wav");
+        sHit[6] = new Sound("Assets/Sound/SFX/SE_00013.wav");
+        sHit[7] = new Sound("Assets/Sound/SFX/SE_00014.wav");
+        sHit[8] = new Sound("Assets/Sound/SFX/SE_00015.wav");
     }
     //Base Functionality
     protected void SetState()
@@ -145,6 +127,7 @@ public class Character : AnimationSprite
             case State.Jump:
                 {
                     SetVisible(Jump);
+                    SetPlayerColl(0, -20, 2f,4f);
                 }
                 break;
             case State.Knockdown:
@@ -167,6 +150,9 @@ public class Character : AnimationSprite
                 break;
             case State.Attack:
                 {
+                    moving = false;
+                    dashLeft = false;
+                    dashRight = false;
                     AttackAddition();
                     SetVisible(CurrentAttack);
                     if (CurrentAttack.FrameValidation())
@@ -175,7 +161,7 @@ public class Character : AnimationSprite
                 break;
             case State.Netural:
                 {
-                    SetVisible(idle);
+                    SetVisible(Idle);
                     BasePlayerColl();
                 }
                 break;
@@ -195,7 +181,7 @@ public class Character : AnimationSprite
                 break;
             case State.Dead:
                 {
-                    SetVisible(idle);
+                    SetVisible(Dead);
                 }
                 break;
             case State.DashForward:
@@ -208,7 +194,6 @@ public class Character : AnimationSprite
                     SetVisible(DashBackwards);
                 }
                 break;
-
         }
     }
     protected void MoveInputs()
@@ -331,7 +316,7 @@ public class Character : AnimationSprite
 
             if (!level.gameEnd && !level.roundBegin && !level.roundEnd)
             {
-                if (grounded && !attacking && !hit && !block && !knockdown)
+                if (grounded && (!attacking || Cancelabel()) && !hit && !block && !knockdown)
                     MoveInputs();
 
 
@@ -339,19 +324,17 @@ public class Character : AnimationSprite
                     AttackInputs();
             }
 
-            if (current != State.Crouch)
-            {
-                BasePlayerColl();
-            }
-            if (currentHealth <= 0)
-                current = State.Dead;
-            else if (hit)
+            if (hit)
             {
                 current = State.Hit;
             }
             else if (knockdown)
             {
                 current = State.Knockdown;
+            }
+            else if (currentHealth <= 0)
+            {
+                current = State.Dead;
             }
             else if (block)
             {
@@ -410,12 +393,12 @@ public class Character : AnimationSprite
     }
     protected virtual void Initalize()
     {
-        idle = new AnimationSprite("Assets/Test Animations/idle.png", 2, 1, 2, false, false);
-        idle.SetOrigin(idle.width / 2, idle.height / 2);
-        idle.SetCycle(0, 2, 16);
-        idle.SetXY(0, -8);
-        AddChild(idle);
-        idle.visible = false;
+        Idle = new AnimationSprite("Assets/Test Animations/idle.png", 2, 1, 2, false, false);
+        Idle.SetOrigin(Idle.width / 2, Idle.height / 2);
+        Idle.SetCycle(0, 2, 16);
+        Idle.SetXY(0, -8);
+        AddChild(Idle);
+        Idle.visible = false;
 
         LightPunch = new AttackClass("Assets/Test Animations/punch2.png", 5, 1, 2, 2, 8, false);
         LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
@@ -454,31 +437,7 @@ public class Character : AnimationSprite
     }
     protected virtual void AttackInputs()
     {
-        //Console.WriteLine(ZMotionRight());
-        //To achive a motion input with attack use LastInput for attack
-        //Add hitbox changes
-        if (ValidInput(9))
-        {
-            //LPAttack();
-            //if(current == State.Jump)
-            //if(!grounded) jump attack (insert here)
-        }
-        else if (ValidInput(10))
-        {
-            //HPAttack();
-        }
-        /*else if (ValidInput(11))
-        {
-            LKAttack();
-            current = State.Attack;
-            attacking = true;
-        }
-        else if (ValidInput(12))
-        {
-            HKAttack();
-            current = State.Attack;
-            attacking = true;
-        }*/
+
 
     }
     protected virtual void SetVisible(AnimationSprite vis)
@@ -486,6 +445,11 @@ public class Character : AnimationSprite
         //Sets the current sprite based on state and animates it
         if (!vis.visible)
         {
+            Dead.visible = false;
+            UltimateAttack.visible = false;
+            KnockDown.visible = false;
+            SpecialAttack.visible = false;
+            HardKick.visible = false;
             DashBackwards.visible = false;
             DashForward.visible = false;
             JumpAttack.visible = false;
@@ -498,25 +462,24 @@ public class Character : AnimationSprite
             HardPunch.visible = false;
             LightKick.visible = false;
             Jump.visible = false;
-            idle.visible = false;
+            Idle.visible = false;
             vis.visible = true;
         }
         // some sprites should not repeat 
-        if (vis.currentFrame == vis.frameCount - 1 && (vis is AttackClass || vis == Hit || vis == Block || vis == DashBackwards || vis == DashForward))
+        if (vis.currentFrame == vis.frameCount - 1 && ((vis is AttackClass && (vis != JumpAttack || grounded)) || vis == Hit || vis == Block || vis == DashBackwards || vis == DashForward || vis == Dead))
         {
             if (vis is AttackClass)
             {
+                if (vis == UltimateAttack)
+                    TriggerSuper(false);
                 if (grounded)
                     BaseHurtBox();
                 attacking = false;
                 vis.currentFrame = 0;
                 if (vis == CrouchAttack)
                     crouching = true;
-                if (vis == JumpAttack && !grounded)
-                {
-                    vis.Animate();
-                    attacking = true;
-                }
+                AttackClass temp = vis as AttackClass;
+                temp.ResetAttack();
             }
             if (vis == Hit || vis == Block)
             {
@@ -531,7 +494,6 @@ public class Character : AnimationSprite
                 dashLeft = false;
                 dashRight = false;
             }
-
         }
         else
             vis.Animate();
@@ -539,6 +501,11 @@ public class Character : AnimationSprite
     protected virtual void AttackAddition()
     {
 
+    }
+    protected void TriggerSuper(bool f)
+    {
+        if (Super != null)
+            Super(f);
     }
     //Stats
     public void ResetHealth()
@@ -554,19 +521,15 @@ public class Character : AnimationSprite
         if (TakeDamage != null)
             TakeDamage(currentHealth);
     }
-    protected void SetHurBox(float x, float y, float Sx, float Sy)
-    {
-        hurtBox.rotation = 0;
-        hurtBox.SetXY(x, y);
-        hurtBox.SetScaleXY(Sx, Sy);
-    }
     protected void BaseHurtBox()
     {
+        hurtBox.rotation = 0;
         hurtBox.SetXY(0, 0);
         hurtBox.SetScaleXY(0, 0);
     }
     protected void BasePlayerColl()
     {
+        playerColl.rotation = 0;
         playerColl.SetScaleXY(2f, 5.5f);
         playerColl.SetXY(0, 0f);
     }
@@ -651,6 +614,47 @@ public class Character : AnimationSprite
         else
             return false;
     }
+    protected bool DoubleQuarterCircleLeft()
+    {
+        bool down = false;
+        bool downside = false;
+        bool side = false;
+        bool down2 = false;
+        bool downside2 = false;
+        bool side2 = false;
+        for (int i = 0; i < Inputs.Count; i++)
+        {
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            {
+                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() != 0) || downside)
+                {
+                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || downside)
+                    {
+                        if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down2)
+                        {
+                            if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() != 0) || downside2)
+                            {
+                                if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || downside2)
+                                    side2 = true;
+
+                                downside2 = true;
+                            }
+
+                            down2 = true;
+                        }
+                        side = true;
+                    }
+
+                    downside = true;
+                }
+                down = true;
+            }
+        }
+        if (down && downside && side && down2 && downside2 && side2)
+            return true;
+        else
+            return false;
+    }
     protected bool QuarterCircleRight()
     {
         bool down = false;
@@ -674,6 +678,46 @@ public class Character : AnimationSprite
             }
         }
         if (down && downside && side)
+            return true;
+        else
+            return false;
+    }
+    protected bool DoubleQuarterCircleRight()
+    {
+        bool down = false;
+        bool downside = false;
+        bool side = false;
+        bool down2 = false;
+        bool downside2 = false;
+        bool side2 = false;
+        for (int i = 0; i < Inputs.Count; i++)
+        {
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            {
+                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() != 0) || downside)
+                {
+                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || downside)
+                    {
+                        if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down2)
+                        {
+                            if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() != 0) || downside2)
+                            {
+                                if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || downside2)
+                                {
+                                    side2 = true;
+                                }
+                                downside2 = true;
+                            }
+                            down2 = true;
+                        }
+                        side = true;
+                    }
+                    downside = true;
+                }
+                down = true;
+            }
+        }
+        if (down && downside && side && down2 && downside2 && side2)
             return true;
         else
             return false;
@@ -749,6 +793,20 @@ public class Character : AnimationSprite
         else
             return QuarterCircleLeft();
     }
+    protected bool DoubleQuarterCircleForward()
+    {
+        if (scaleX > 0)
+            return DoubleQuarterCircleRight();
+        else
+            return DoubleQuarterCircleLeft();
+    }
+    protected bool DoubleQuarterCircleBackwards()
+    {
+        if (scaleX < 0)
+            return DoubleQuarterCircleRight();
+        else
+            return DoubleQuarterCircleLeft();
+    }
     protected bool QuarterCircleBackwards()
     {
         if (scaleX < 0)
@@ -806,12 +864,40 @@ public class Character : AnimationSprite
         else
             return false;
     }
+    protected bool DoubleDown()
+    {
+        bool down = false;
+        bool downside = false;
+        bool side = false;
+        for (int i = 0; i < Inputs.Count; i++)
+        {
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            {
+                if ((Inputs[i].GetKey() == 0 && Inputs[i].GetTime() != 0) || downside)
+                {
+                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || downside)
+                    {
+                        side = true;
+                    }
+                    downside = true;
+
+                }
+                down = true;
+
+            }
+        }
+        if (down && downside && side)
+            return true;
+        else
+            return false;
+    }
     //Battle Checks
     //if knock causes bug you can implement the knock from here
     protected void GotHit()
     {
         attacking = false;
-        if (Blocking() && !hit)
+        CurrentAttack.ResetAttack();
+        if (Blocking() && !hit && !knockdown)
         {
             block = true;
             Block.currentFrame = 0;
@@ -848,8 +934,8 @@ public class Character : AnimationSprite
                 {
                     currentPower += 0.1f;
                 }
-            Vector2 a = new Vector2(0, -playerColl.height / 4);
-            spark.SetXY(a.x, a.y);
+            //Vector2 a = new Vector2(0, -playerColl.height / 4);
+            //spark.SetXY(a.x, a.y);
             spark.currentFrame = 0;
             spark.visible = true;
         }
@@ -871,18 +957,23 @@ public class Character : AnimationSprite
         {
             attack.Hit();
             opponent.GotHit();
-            if (currentPower + damage * 2 < MaxPower)
-                currentPower += damage * 2;
-            else
-                while (currentPower < MaxPower)
-                {
-                    currentPower += 0.1f;
-                }
+            if (CurrentAttack != UltimateAttack)
+            {
+                if (currentPower + damage * 2 < MaxPower)
+                    currentPower += damage * 2;
+                else
+                    while (currentPower < MaxPower)
+                    {
+                        currentPower += 0.1f;
+                    }
+            }
             if (HitConfirm != null)
                 HitConfirm(CurrentAttack);
 
             if (BarFill != null)
                 BarFill(currentPower);
+            int i = Utils.Random(0,9);
+            sHit[i].Play(false,0,0.4f);
         }
     }
     protected void GroundCheck()
@@ -926,6 +1017,10 @@ public class Character : AnimationSprite
     {
         return MaxPower;
     }
+    public float GetcurrentHP()
+    {
+        return currentHealth;
+    }
     //Setters
     protected void SetCurrentAttack(AttackClass attack)
     {
@@ -946,7 +1041,6 @@ public class Character : AnimationSprite
     public void AddInput(int i)
     {
         Inputs.Add(new PlayerInput(i));
-        Console.WriteLine(LastInput());
         if (Inputs.Count == 20)
             Inputs.RemoveAt(0);
         if (parent != null && !opponent.attacking)
@@ -956,6 +1050,29 @@ public class Character : AnimationSprite
     {
         opponent = player;
         walls.Add(player.playerColl);
+    }
+    protected void ResetSpBar()
+    {
+        currentPower = 0;
+        if (BarFill != null)
+            BarFill(currentPower);
+    }
+    protected void SetPlayerColl(float x, float y, float Sx = 0, float Sy = 0)
+    {
+        playerColl.rotation = 0;
+        playerColl.SetXY(x, y);
+        if(Sx == 0 && Sy == 0)
+        {
+            playerColl.SetScaleXY(2f, 5.5f);
+        }
+        else
+        playerColl.SetScaleXY(Sx, Sy);
+    }
+    protected void SetHurBox(float x, float y, float Sx, float Sy)
+    {
+        hurtBox.rotation = 0;
+        hurtBox.SetXY(x, y);
+        hurtBox.SetScaleXY(Sx, Sy);
     }
     //Destroy
     protected override void OnDestroy()

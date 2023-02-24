@@ -5,7 +5,7 @@ using TiledMapParser;
 
 class Button : Background
 {
-    public Button(TiledObject obj = null) : base()
+    public Button(TiledObject obj = null)
     {
         alpha = obj.GetFloatProperty("alpha", 1f);
         visible = false;
