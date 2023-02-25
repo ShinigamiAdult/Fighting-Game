@@ -14,21 +14,9 @@ public class StartScreen : Level
     {
         SetXY(0, 50);
         title = new Sound("Assets/Sound/VoiceLines/Title_screen.wav");
-        music = new Sound("Assets/Sound/Music/Music3.wav",true).Play();
+        music = new Sound("Assets/Sound/Music/Music3.wav",true).Play(false,0,0.6f);
         click4 = new Sound("Assets/Sound/UI/Start2.wav");
     }
-
-   /* public override void CreateLevel(int i = 0, int y = 0)
-    {
-        loader.highQualityText = true;
-        loader.rootObject = this;
-        loader.autoInstance = true;
-        loader.addColliders = false;
-        loader.LoadImageLayers();
-        loader.LoadTileLayers();
-        loader.addColliders = true;
-        loader.LoadObjectGroups();
-    }*/
     void Update()
     {
         if(Input.GetKeyDown(Key.P) && delay == 0)

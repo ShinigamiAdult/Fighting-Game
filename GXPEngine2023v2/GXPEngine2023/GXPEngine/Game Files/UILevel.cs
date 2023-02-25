@@ -24,7 +24,6 @@ public class UILevel : Level
 
         List<Character> players = ((MyGame)game).GameLevel.players;
         ((MyGame)game).GameLevel.indi = FindObjectsOfType<Indication>();
-        Console.WriteLine("lenght " + ((MyGame)game).GameLevel.indi.Length);
         SPBar[] sPbars = FindObjectsOfType<SPBar>();
         ((MyGame)game).GameLevel.pauseScreen = FindObjectOfType<PauseScreen>();
         ((MyGame)game).GameLevel.timer = FindObjectOfType<Timer>();

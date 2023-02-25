@@ -6,7 +6,7 @@ using TiledMapParser;
 public class GameLevel : Level
 {
     public List<Character> players = new List<Character>();
-    Character Hitter;
+   // Character Hitter;
     Background background;
     public Timer timer;
     int millis;
@@ -29,7 +29,7 @@ public class GameLevel : Level
     //bool respawn = false; used for smart respawn
     public GameLevel(string filename, int i, int y) : base(filename, i, y)
     {
-        music = new Sound("Assets/Sound/Music/Music1.wav", true).Play(false, 0, 0.2f);
+        music = new Sound("Assets/Sound/Music/Music1.wav", true).Play(false, 0, 0.3f);
         millis = time * 1000;
         win[0] = new Sound("Assets/Sound/SFX/SE_00020.wav");
         win[1] = new Sound("Assets/Sound/SFX/SE_00021.wav");
@@ -79,7 +79,7 @@ public class GameLevel : Level
         pausetime = attack.HitStop();
         pause = true;
         this.AddChildAt(attack.parent, this.GetChildCount() - 1);
-        Hitter = attack.parent as Character;
+        //Hitter = attack.parent as Character;
     }
     void Update()
     {
@@ -295,6 +295,8 @@ public class GameLevel : Level
         {
             background.visible = true;
             background.SetTime(20);
+            //pausetime = 20;
+            //pause = true;
         }
         else
         {

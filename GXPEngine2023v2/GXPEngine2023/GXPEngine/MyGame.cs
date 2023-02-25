@@ -12,7 +12,7 @@ public class MyGame : Game
     public Controller1 controller1;
     public Controller2 controller2;
     //1158, 670
-    public MyGame() : base(1158, 670, true, false, 1920, 1080, true)
+    public MyGame() : base(928, 544, true, false, 1920, 1080, true)
     {
         game.targetFps = 60;
         controller1 = new Controller1();

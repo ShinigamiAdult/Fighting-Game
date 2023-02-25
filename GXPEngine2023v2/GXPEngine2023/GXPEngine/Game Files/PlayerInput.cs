@@ -7,7 +7,7 @@ using System.Text;
 public class PlayerInput
 {
     int key;
-    int timeout = 10;
+    int timeout = 15;
 
     public PlayerInput(int i)
     {
@@ -15,7 +15,7 @@ public class PlayerInput
     }
     public void Update()
     {
-        if(timeout > 0)
+        if(timeout > -20)
             timeout--;
     }
 

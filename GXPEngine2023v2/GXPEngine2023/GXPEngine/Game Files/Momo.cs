@@ -13,66 +13,74 @@ class Momo : Character
     }
     protected override void SetStats()
     {
-        MaxHealth = 700;
+        MaxHealth = 1000;
         currentHealth = MaxHealth;
-        MaxPower = 400;
+        MaxPower = 600;
         currentPower = 0;
     }
     protected override void Initalize()
     {
         //Attacks
-        LightPunch = new AttackClass("Assets/Charecter 2/C2 LightPunch.png", 5, 1, 5, 2, 10, true);
+        LightPunch = new AttackClass("Assets/Charecter 2/C2 LightPunch.png", 5, 1, 5, 2, 6);
+        LightPunch.SetAttackProperties(false, false);
         LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
-        LightPunch.SetCycle(0, 5, 6);
+        LightPunch.SetCycle(0, 5, 5);
         LightPunch.SetXY(0, -8);
         AddChild(LightPunch);
         LightPunch.visible = false;
 
-        HardPunch = new AttackClass("Assets/Charecter 2/C2 HardPunch.png", 5, 1, 5, 3, 14, false);
+        HardPunch = new AttackClass("Assets/Charecter 2/C2 HardPunch.png", 5, 1, 5, 3, 15);
+        HardPunch.SetAttackProperties(false, false);
         HardPunch.SetOrigin(HardPunch.width / 2, HardPunch.height / 2);
-        HardPunch.SetCycle(0, 6, 6);
+        HardPunch.SetCycle(0, 6, 5);
         HardPunch.SetXY(0, -8);
         AddChild(HardPunch);
         HardPunch.visible = false;
 
-        LightKick = new AttackClass("Assets/Charecter 2/C2 LightKick.png", 6, 1, 5, 3, 6, false);
+        LightKick = new AttackClass("Assets/Charecter 2/C2 LightKick.png", 6, 1, 5, 3, 6);
+        LightKick.SetAttackProperties(false, false);
         LightKick.SetOrigin(LightKick.width / 2, LightKick.height / 2);
-        LightKick.SetCycle(0, 6, 6);
+        LightKick.SetCycle(0, 6, 5);
         LightKick.SetXY(0, -8);
         AddChild(LightKick);
         LightKick.visible = false;
 
         //Edit hard kick could become cool special and another hard kick
 
-        HardKick = new AttackClass("Assets/Charecter 2/C2 HardKick.png", 6, 1, 6, 3, 14, true);
+        HardKick = new AttackClass("Assets/Charecter 2/C2 HardKick.png", 6, 1, 6, 3, 15);
+        HardKick.SetAttackProperties(false, false);
         HardKick.SetOrigin(HardKick.width / 2, HardKick.height / 2);
-        HardKick.SetCycle(0, 6, 6);
+        HardKick.SetCycle(0, 6, 5);
         HardKick.SetXY(0, -8);
         AddChild(HardKick);
         HardKick.visible = false;
 
-        SpecialAttack = new AttackClass("Assets/Charecter 2/C2 Special.png", 11, 1, 11, 4, 5, true);
+        SpecialAttack = new AttackClass("Assets/Charecter 2/C2 Special.png", 11, 1, 11, 4, 5);
+        SpecialAttack.SetAttackProperties(true, true);
         SpecialAttack.SetOrigin(SpecialAttack.width / 2, SpecialAttack.height / 2);
-        SpecialAttack.SetCycle(0, 11, 3);
+        SpecialAttack.SetCycle(0, 11, 2);
         SpecialAttack.SetXY(100, -200);
         AddChild(SpecialAttack);
         SpecialAttack.visible = false;
 
-        UltimateAttack = new AttackClass("Assets/Charecter 2/C2 Ultimate.png", 26, 1, 9, 26, 6, true);
+        UltimateAttack = new AttackClass("Assets/Charecter 2/C2 Ultimate.png", 26, 1, 9, 26, 10);
+        UltimateAttack.SetAttackProperties(true, true);
         UltimateAttack.SetOrigin(UltimateAttack.width / 2, UltimateAttack.height / 2);
-        UltimateAttack.SetCycle(0, 26, 5);
+        UltimateAttack.SetCycle(0, 26, 4);
         UltimateAttack.SetXY(100, -200);
         AddChild(UltimateAttack);
         UltimateAttack.visible = false;
 
-        CrouchAttack = new AttackClass("Assets/Charecter 2/C2 CrouchAttack.png", 5, 1, 5, 2, 8, false);
+        CrouchAttack = new AttackClass("Assets/Charecter 2/C2 CrouchAttack.png", 5, 1, 5, 2, 6);
+        CrouchAttack.SetAttackProperties(false, false);
         CrouchAttack.SetOrigin(CrouchAttack.width / 2, CrouchAttack.height / 2);
-        CrouchAttack.SetCycle(0, 5, 6);
+        CrouchAttack.SetCycle(0, 5, 5);
         CrouchAttack.SetXY(0, -8);
         AddChild(CrouchAttack);
         CrouchAttack.visible = false;
 
-        JumpAttack = new AttackClass("Assets/Charecter 2/C2 JumpAttack.png", 1, 1, 1, 0, 8, false);
+        JumpAttack = new AttackClass("Assets/Charecter 2/C2 JumpAttack.png", 1, 1, 1, 0, 8);
+        JumpAttack.SetAttackProperties(false, true);
         JumpAttack.SetOrigin(JumpAttack.width / 2, JumpAttack.height / 2);
         JumpAttack.SetCycle(0, 1, 20);
         JumpAttack.SetXY(0, -8);
@@ -103,14 +111,14 @@ class Momo : Character
 
         Hit = new AnimationSprite("Assets/Charecter 2/C2 Hit.png", 3, 1, 3, false, false);
         Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 10);
+        Hit.SetCycle(0, 3, 15);
         Hit.SetXY(0, -8);
         AddChild(Hit);
         Hit.visible = false;
 
-        Block = new AnimationSprite("Assets/Charecter 2/C2 Block.png", 3, 1, 3, false, false);
+        Block = new AnimationSprite("Assets/Charecter 2/C2 Block.png", 2, 1, 2, false, false);
         Block.SetOrigin(Block.width / 2, Block.height / 2);
-        Block.SetCycle(0, 3, 6);
+        Block.SetCycle(0, 2, 10);
         Block.SetXY(0, -8);
         AddChild(Block);
         Block.visible = false;
@@ -158,7 +166,7 @@ class Momo : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(70, -15, 2.5f, 1f);
         hurtBox.rotation = -25;
-        SetAttackDmg(30, 5, 10);
+        SetAttackDmg(30, 2, 0);
         attacking = true;
     }
     void HPAttack()
@@ -167,7 +175,7 @@ class Momo : Character
         CurrentAttack.ResetAttack();
         SetCurrentAttack(CurrentAttack);
         SetHurBox(50, 0, 3f, 6f);
-        SetAttackDmg(50,5,5);
+        SetAttackDmg(50,3,0);
 
         attacking = true;
     }
@@ -188,7 +196,7 @@ class Momo : Character
         CurrentAttack.ResetAttack();
         SetCurrentAttack(CurrentAttack);
         SetHurBox(30, 0, 3.5f, 2f);
-        SetAttackDmg(80, 5, 10);
+        SetAttackDmg(60, 5, 0);
         SetPlayerColl(-30, 0,5f,2f);
         attacking = true;
 
@@ -198,7 +206,7 @@ class Momo : Character
         CrouchAttack.ResetAttack();
         SetCurrentAttack(CrouchAttack);
         SetHurBox(70, 50, 1.5f, 1f);
-        SetAttackDmg(50, 3);
+        SetAttackDmg(40, 2);
         CurrentAttack = CrouchAttack;
         attacking = true;
     }
@@ -207,7 +215,7 @@ class Momo : Character
         JumpAttack.ResetAttack();
         SetCurrentAttack(JumpAttack);
         SetHurBox(15, -10, 5f, 1.5f);
-        SetAttackDmg(70, 3);
+        SetAttackDmg(50, 2);
         CurrentAttack = JumpAttack;
         attacking = true;
     }
@@ -218,7 +226,7 @@ class Momo : Character
         CurrentAttack.ResetHit(3);
         SetCurrentAttack(CurrentAttack);
         SetHurBox(180, -20, 5f, 5f);
-        SetAttackDmg(15, 2, 3);
+        SetAttackDmg(15, 3, 3);
         attacking = true;
     }
     void UltAttack()
@@ -235,15 +243,11 @@ class Momo : Character
         ResetSpBar();
         TriggerSuper(true);
     }
-    protected override void AttackInputs()
+    protected override void BasicAttackInputs()
     {
-        //Console.WriteLine(ZMotionRight());
-        //To achive a motion input with attack use LastInput for attack
-        //Add hitbox changes
         if (ValidInput(9) && grounded)
         {
             LPAttack();
-            //if(!grounded) jump attack (insert here)
         }
         else if (ValidInput(10) && grounded)
         {
@@ -269,9 +273,12 @@ class Momo : Character
             HKAttack();
         }
 
-        if (DoubleQuarterCircleBackwards() && (LastInput() == 11 || LastInput() == 12) && currentPower >= MaxPower)
+    }
+    protected override void SpecialAttackInputs()
+    {
+        if (grounded && DoubleQuarterCircleBackwards() && (LastInput() == 11 || LastInput() == 12) && currentPower >= MaxPower)
             UltAttack();
-        else if (DoubleDown() && (LastInput() == 10 || LastInput() == 9))
+        else if (grounded && DoubleDown() && (LastInput() == 10 || LastInput() == 9))
             SPAttack();
     }
     protected override void AttackAddition()
@@ -280,9 +287,9 @@ class Momo : Character
             if(CurrentAttack.currentFrame == 1)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 3;
+                    vx = Horizontalspeed * 1;
                 else
-                    vx = -Horizontalspeed * 3;
+                    vx = -Horizontalspeed * 1;
             }
         if (CurrentAttack == HardPunch)
             if (CurrentAttack.currentFrame == 1 || CurrentAttack.currentFrame == 2)

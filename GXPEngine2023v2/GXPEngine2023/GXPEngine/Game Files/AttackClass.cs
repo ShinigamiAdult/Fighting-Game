@@ -11,17 +11,21 @@ public class AttackClass : AnimationSprite
 
     bool hit;
     bool cancel;
+    bool airjuggle;
     int validFrame;
     int hitStop;
     State current;
-    public AttackClass(string filename, int cols, int rows, int frames, int vFrame, int hStop, bool c) : base(filename, cols, rows, frames, false, false)
+    public AttackClass(string filename, int cols, int rows, int frames, int vFrame, int hStop) : base(filename, cols, rows, frames, false, false)
     {
         validFrame = vFrame;
         hitStop = hStop;
         current = State.None;
-        cancel = c;
     }
-
+    public void SetAttackProperties(bool can, bool air)
+    {
+        cancel = can;
+        airjuggle = air;
+    }
     public bool FrameValidation()
     {
         if (currentFrame < validFrame)
@@ -72,5 +76,10 @@ public class AttackClass : AnimationSprite
     public bool Cancel()
     {
         return cancel;
+    }
+
+    public bool Juggle()
+    {
+        return airjuggle;
     }
 }

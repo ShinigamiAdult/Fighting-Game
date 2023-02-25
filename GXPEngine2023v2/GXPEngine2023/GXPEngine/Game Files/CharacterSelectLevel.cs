@@ -12,7 +12,7 @@ public class CharacterSelectLevel : Level
     public CharacterSelectLevel(string filename) : base(filename,0,0)
     {
         Sound charSelect = new Sound("Assets/Sound/VoiceLines/ChareterSelect.wav");
-        charSelect.Play();
+        charSelect.Play(false,0,0.7f);
 
         //Console.WriteLine("Game Width: " + game.width);
     }

@@ -27,7 +27,8 @@ public class Character : AnimationSprite
     //Checkings
     protected bool grounded;
     protected bool attacking;
-    protected bool moving;
+    protected bool movingLeft;
+    protected bool movingRight;
     protected bool crouching;
     protected bool hit;
     protected bool block;
@@ -38,7 +39,7 @@ public class Character : AnimationSprite
     protected int attackCode;
     protected Sound specialSound;
     protected Sound ultSound;
-    protected Sound[] sHit = new Sound[9];
+    protected Sound[] sHit = new Sound[8];
 
     //Positoning
     protected float vy; // Update first this then use it to do Move until collision
@@ -88,7 +89,9 @@ public class Character : AnimationSprite
         }
         SetOrigin(width / 2, height / 2);
         alpha = 0;
+
         SetStats();
+
         Initalize();
         CurrentAttack = LightPunch;
         playerColl = new PlayerColl();
@@ -116,7 +119,6 @@ public class Character : AnimationSprite
         sHit[5] = new Sound("Assets/Sound/SFX/SE_00012.wav");
         sHit[6] = new Sound("Assets/Sound/SFX/SE_00013.wav");
         sHit[7] = new Sound("Assets/Sound/SFX/SE_00014.wav");
-        sHit[8] = new Sound("Assets/Sound/SFX/SE_00015.wav");
     }
     //Base Functionality
     protected void SetState()
@@ -127,7 +129,7 @@ public class Character : AnimationSprite
             case State.Jump:
                 {
                     SetVisible(Jump);
-                    SetPlayerColl(0, -20, 2f,4f);
+                    SetPlayerColl(0, -20, 2f, 4f);
                 }
                 break;
             case State.Knockdown:
@@ -150,7 +152,8 @@ public class Character : AnimationSprite
                 break;
             case State.Attack:
                 {
-                    moving = false;
+                    movingLeft = false;
+                    movingRight = false;
                     dashLeft = false;
                     dashRight = false;
                     AttackAddition();
@@ -201,15 +204,15 @@ public class Character : AnimationSprite
         //Left
         if (LastInput() == 1)
         {
-            if (DashLeft())
+            if (DashLeft() && grounded)
             {
-                vx = -Horizontalspeed * 15;
+                //vx = -Horizontalspeed * 15;
                 dashLeft = true;
             }
             else
             {
-                vx = -Horizontalspeed;
-                moving = true;
+                //vx = -Horizontalspeed;
+                movingLeft = true;
             }
 
         }
@@ -240,15 +243,15 @@ public class Character : AnimationSprite
         //Right
         if (LastInput() == 5)
         {
-            if (DashRight())
+            if (DashRight() && grounded)
             {
-                vx = Horizontalspeed * 15;
+                //vx = Horizontalspeed * 15;
                 dashRight = true;
             }
             else
             {
-                vx = Horizontalspeed;
-                moving = true;
+                //vx = Horizontalspeed;
+                movingRight = true;
             }
         }
         if (LastInput() == 6)
@@ -274,16 +277,6 @@ public class Character : AnimationSprite
             knockdown = false;
         }
 
-        if (playerColl.HitTest(opponent) && !grounded)
-        {
-            opponent.vx = scaleX > 0 ? -20 : 20;
-        }
-
-        if (playerColl.HitTest(opponent) && grounded && opponent.grounded)
-        {
-            vx = scaleX > 0 ? -20 : 20;
-        }
-
         //Update position on x
         coll = MoveUntilCollision(vx, 0, walls);
 
@@ -297,12 +290,18 @@ public class Character : AnimationSprite
                 }
             }
         }
-
+        if (playerColl.HitTest(opponent))
+        {
+            opponent.vx = scaleX > 0 ? -10 : 10;
+            if (grounded)
+                vx = scaleX > 0 ? -10 : 10;
+        }
         //ground Check
         if (grounded && !hit && !block && !dashLeft && !dashRight)
         {
             vx = 0;
-            moving = false;
+            movingLeft = false;
+            movingRight = false;
         }
         if (LastInput() != 6 && LastInput() != 7 && LastInput() != 8)
             crouching = false;
@@ -316,12 +315,14 @@ public class Character : AnimationSprite
 
             if (!level.gameEnd && !level.roundBegin && !level.roundEnd)
             {
-                if (grounded && (!attacking || Cancelabel()) && !hit && !block && !knockdown)
-                    MoveInputs();
 
+                MoveInputs();
 
-                if (!knockdown && !hit && !block && (!attacking || Cancelabel()))
-                    AttackInputs();
+                if ((!attacking || Cancelabel()))
+                    SpecialAttackInputs();
+
+                if (!attacking)
+                    BasicAttackInputs();
             }
 
             if (hit)
@@ -358,6 +359,7 @@ public class Character : AnimationSprite
                     current = State.DashForward;
                 else
                     current = State.DashBackward;
+                vx = -Horizontalspeed * 2;
             }
             else if (dashRight)
             {
@@ -365,10 +367,17 @@ public class Character : AnimationSprite
                     current = State.DashForward;
                 else
                     current = State.DashBackward;
+                vx = Horizontalspeed * 2;
             }
-            else if (moving)
+            else if (movingLeft)
             {
                 current = State.Move;
+                vx = -Horizontalspeed;
+            }
+            else if (movingRight)
+            {
+                current = State.Move;
+                vx = Horizontalspeed;
             }
             else
                 current = State.Netural;
@@ -386,60 +395,17 @@ public class Character : AnimationSprite
     //Shared
     protected virtual void SetStats()
     {
-        MaxHealth = 700;
-        currentHealth = MaxHealth;
-        MaxPower = 500;
-        currentPower = 0;
+
     }
     protected virtual void Initalize()
-    {
-        Idle = new AnimationSprite("Assets/Test Animations/idle.png", 2, 1, 2, false, false);
-        Idle.SetOrigin(Idle.width / 2, Idle.height / 2);
-        Idle.SetCycle(0, 2, 16);
-        Idle.SetXY(0, -8);
-        AddChild(Idle);
-        Idle.visible = false;
-
-        LightPunch = new AttackClass("Assets/Test Animations/punch2.png", 5, 1, 2, 2, 8, false);
-        LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
-        LightPunch.SetCycle(0, 5, 8);
-        LightPunch.SetXY(0, -8);
-        AddChild(LightPunch);
-        LightPunch.visible = false;
-
-        HardPunch = new AttackClass("Assets/Test Animations/punch1.png", 5, 1, 2, 2, 12, true);
-        HardPunch.SetOrigin(HardPunch.width / 2, HardPunch.height / 2);
-        HardPunch.SetCycle(0, 5, 8);
-        HardPunch.SetXY(0, -8);
-        AddChild(HardPunch);
-        HardPunch.visible = false;
-
-        Hit = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
-        Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 4);
-        Hit.SetXY(0, -8);
-        AddChild(Hit);
-        Hit.visible = false;
-
-        Block = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
-        Block.SetOrigin(Block.width / 2, Block.height / 2);
-        Block.SetCycle(0, 3, 4);
-        Block.SetXY(0, -8);
-        AddChild(Block);
-        Block.visible = false;
-
-        Walk = new AnimationSprite("Assets/Charecter 1/C1 Walk.png", 4, 1, 4, false, false);
-        Walk.SetOrigin(Walk.width / 2, Walk.height / 2);
-        Walk.SetCycle(0, 4, 4);
-        Walk.SetXY(0, -8);
-        AddChild(Walk);
-        Walk.visible = false;
-    }
-    protected virtual void AttackInputs()
+    { }
+    protected virtual void BasicAttackInputs()
     {
 
 
     }
+    protected virtual void SpecialAttackInputs()
+    { }
     protected virtual void SetVisible(AnimationSprite vis)
     {
         //Sets the current sprite based on state and animates it
@@ -512,7 +478,8 @@ public class Character : AnimationSprite
     {
         attacking = false;
         grounded = false;
-        moving = false;
+        movingLeft = false;
+        movingRight = false;
         crouching = false;
         hit = false;
         block = false;
@@ -550,7 +517,7 @@ public class Character : AnimationSprite
         PlayerInput c = Inputs.FindLast(x => x.GetKey() == a);
         if (c != null)
         {
-            if (c.GetTime() != 0)
+            if (c.GetTime() > 0)
             {
                 return true;
             }
@@ -566,21 +533,21 @@ public class Character : AnimationSprite
     }
     protected int LastInput()
     {
-        if (Inputs[Inputs.Count - 1].GetTime() != 0)
+        if (Inputs[Inputs.Count - 1].GetTime() > 0)
             return Inputs[Inputs.Count - 1].GetKey();
         else
             return 0;
     }
     protected int BeforeLastInput()
     {
-        if (Inputs[Inputs.Count - 2].GetTime() != 0)
+        if (Inputs[Inputs.Count - 2].GetTime() > 0)
             return Inputs[Inputs.Count - 2].GetKey();
         else
             return 0;
     }
     protected int ThirdLastInput()
     {
-        if (Inputs[Inputs.Count - 3].GetTime() != 0)
+        if (Inputs[Inputs.Count - 3].GetTime() > 0)
             return Inputs[Inputs.Count - 3].GetKey();
         else
             return 0;
@@ -597,11 +564,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
             {
-                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() != 0) || downside)
+                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() > 0) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > 0) || downside)
                         side = true;
 
                     downside = true;
@@ -624,17 +591,17 @@ public class Character : AnimationSprite
         bool side2 = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > -10) || down)
             {
-                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() != 0) || downside)
+                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() > -10) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > -10) || downside)
                     {
-                        if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down2)
+                        if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down2)
                         {
-                            if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() != 0) || downside2)
+                            if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() > 0) || downside2)
                             {
-                                if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || downside2)
+                                if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > 0) || downside2)
                                     side2 = true;
 
                                 downside2 = true;
@@ -662,11 +629,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
             {
-                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() != 0) || downside)
+                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() > 0) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > 0) || downside)
                     {
                         side = true;
                     }
@@ -692,17 +659,17 @@ public class Character : AnimationSprite
         bool side2 = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > -10) || down)
             {
-                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() != 0) || downside)
+                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() > -10) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > -10) || downside)
                     {
-                        if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down2)
+                        if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down2)
                         {
-                            if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() != 0) || downside2)
+                            if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() > 0) || downside2)
                             {
-                                if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || downside2)
+                                if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > 0) || downside2)
                                 {
                                     side2 = true;
                                 }
@@ -724,64 +691,54 @@ public class Character : AnimationSprite
     }
     protected bool ZMotionLeft()
     {
-        bool side1 = false;
         bool down = false;
         bool downside = false;
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || side1)
+            if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > -5) || side)
             {
-                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
                 {
-                    if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() > 0) || downside)
                     {
-                        if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() != 0) || downside)
-                        {
-                            side = true;
-                        }
                         downside = true;
 
                     }
                     down = true;
 
                 }
-                side1 = true;
+                side = true;
             }
         }
-        if (down && downside && side && side1)
+        if (down && downside && side)
             return true;
         else
             return false;
     }
     protected bool ZMotionRight()
-    {
-        bool side1 = false;
+    {;
         bool down = false;
         bool downside = false;
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || side1)
+            if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > -5) || side)
             {
-                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
                 {
-                    if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() > 0) || downside)
                     {
-                        if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() != 0) || downside)
-                        {
-                            side = true;
-                        }
                         downside = true;
 
                     }
                     down = true;
 
                 }
-                side1 = true;
+                side = true;
             }
         }
-        if (down && downside && side && side1)
+        if (down && downside && side)
             return true;
         else
             return false;
@@ -871,11 +828,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
             {
-                if ((Inputs[i].GetKey() == 0 && Inputs[i].GetTime() != 0) || downside)
+                if ((Inputs[i].GetKey() == 0 && Inputs[i].GetTime() > 0) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() != 0) || downside)
+                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || side)
                     {
                         side = true;
                     }
@@ -883,7 +840,6 @@ public class Character : AnimationSprite
 
                 }
                 down = true;
-
             }
         }
         if (down && downside && side)
@@ -897,7 +853,7 @@ public class Character : AnimationSprite
     {
         attacking = false;
         CurrentAttack.ResetAttack();
-        if (Blocking() && !hit && !knockdown)
+        if (Blocking() && !hit && !knockdown && grounded)
         {
             block = true;
             Block.currentFrame = 0;
@@ -915,9 +871,13 @@ public class Character : AnimationSprite
                 {
                     currentPower += 0.1f;
                 }
+            int i = Utils.Random(4, 8);
+            sHit[i].Play(false, 0, 0.4f);
         }
         else
         {
+            if (!grounded)
+                knockdown = true;
             hit = true;
             Hit.currentFrame = 0;
             if (currentHealth - opponent.damage > 0)
@@ -934,10 +894,11 @@ public class Character : AnimationSprite
                 {
                     currentPower += 0.1f;
                 }
-            //Vector2 a = new Vector2(0, -playerColl.height / 4);
-            //spark.SetXY(a.x, a.y);
             spark.currentFrame = 0;
             spark.visible = true;
+
+            int i = Utils.Random(0, 4);
+            sHit[i].Play(false, 0, 0.4f);
         }
         if (TakeDamage != null)
             TakeDamage(currentHealth);
@@ -953,7 +914,7 @@ public class Character : AnimationSprite
     }
     protected void AttackCollision(AttackClass attack)
     {
-        if (hurtBox.HitTest(opponent.playerColl) && opponent.CurrentAttack.GetState() != AttackClass.State.Active)
+        if (hurtBox.HitTest(opponent.playerColl) && opponent.CurrentAttack.GetState() != AttackClass.State.Active && (!opponent.knockdown || attack.Juggle()))
         {
             attack.Hit();
             opponent.GotHit();
@@ -972,8 +933,6 @@ public class Character : AnimationSprite
 
             if (BarFill != null)
                 BarFill(currentPower);
-            int i = Utils.Random(0,9);
-            sHit[i].Play(false,0,0.4f);
         }
     }
     protected void GroundCheck()
@@ -1045,7 +1004,8 @@ public class Character : AnimationSprite
     public void AddInput(int i)
     {
         Inputs.Add(new PlayerInput(i));
-        if (Inputs.Count == 20)
+        Console.WriteLine(i);
+        if (Inputs.Count == 30)
             Inputs.RemoveAt(0);
         if (parent != null && !opponent.attacking)
             parent.AddChildAt(this, parent.GetChildCount() - 1);
@@ -1065,12 +1025,12 @@ public class Character : AnimationSprite
     {
         playerColl.rotation = 0;
         playerColl.SetXY(x, y);
-        if(Sx == 0 && Sy == 0)
+        if (Sx == 0 && Sy == 0)
         {
             playerColl.SetScaleXY(2f, 5.5f);
         }
         else
-        playerColl.SetScaleXY(Sx, Sy);
+            playerColl.SetScaleXY(Sx, Sy);
     }
     protected void SetHurBox(float x, float y, float Sx, float Sy)
     {
@@ -1100,15 +1060,14 @@ public class Character : AnimationSprite
             if (!grounded && opponent.knockY == 0)
             {
                 gravity = -5;
-                knockdown = true;
+                grounded = false;
             }
             else
             {
                 gravity = -opponent.knockY;
-                knockdown = true;
+                grounded = false;
             }
-
-            grounded = false;
+           
         }
     }
 }

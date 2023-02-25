@@ -23,7 +23,7 @@ public class CharacterSelectManager : AnimationSprite
         ((MyGame)game).controller2.SecondaryControllerInput2 += AddInput2;
         orochi = new Sound("Assets/Sound/VoiceLines/Kumagawa_Select.wav");
         momo = new Sound("Assets/Sound/VoiceLines/Momo_Select.wav");
-        music = new Sound("Assets/Sound/Music/Music4.wav",true).Play(false,0,0.7f);
+        music = new Sound("Assets/Sound/Music/Music4.wav",true).Play(false,0,0.6f);
     }
 
     public void AddCharaters(CharacterIcon[] charecter)
@@ -101,9 +101,9 @@ public class CharacterSelectManager : AnimationSprite
                 Images[0].SetTime();
                 select1 = true;
                 if (index1 == 0)
-                    orochi.Play();
+                    orochi.Play(false, 0, 0.7f);
                 if (index1 == 1)
-                    momo.Play();
+                    momo.Play(false,0,0.7f);
             }
         }
         else if (select1 && i == 3)
@@ -134,9 +134,9 @@ public class CharacterSelectManager : AnimationSprite
                 Images[1].SetTime();
                 select2 = true;
                 if (index2 == 0)
-                    orochi.Play();
+                    orochi.Play(false, 0, 0.7f);
                 if (index2 == 1)
-                    momo.Play();
+                    momo.Play(false, 0, 0.7f);
             }
         }
         else if (select2 && i == 3)
