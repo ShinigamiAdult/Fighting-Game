@@ -24,7 +24,7 @@ class Orochi : Character
         LightPunch = new AttackClass("Assets/Charecter 1/C1 LightPunch.png", 5, 1, 5, 2, 10);
         LightPunch.SetAttackProperties(true, false);
         LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
-        LightPunch.SetCycle(0, 5, 5);
+        LightPunch.SetCycle(0, 5, 4);
         LightPunch.SetXY(0, -8);
         AddChild(LightPunch);
         LightPunch.visible = false;
@@ -32,7 +32,7 @@ class Orochi : Character
         HardPunch = new AttackClass("Assets/Charecter 1/C1 HardPunch.png", 6, 1, 6, 3, 14);
         HardPunch.SetAttackProperties(true, false);
         HardPunch.SetOrigin(HardPunch.width / 2, HardPunch.height / 2);
-        HardPunch.SetCycle(0, 6, 5);
+        HardPunch.SetCycle(0, 6, 3);
         HardPunch.SetXY(0, -8);
         AddChild(HardPunch);
         HardPunch.visible = false;
@@ -40,7 +40,7 @@ class Orochi : Character
         LightKick = new AttackClass("Assets/Charecter 1/C1 LightKick.png", 5, 1, 5, 2, 8);
         LightKick.SetAttackProperties(false, false);
         LightKick.SetOrigin(LightKick.width / 2, LightKick.height / 2);
-        LightKick.SetCycle(0, 5, 5);
+        LightKick.SetCycle(0, 5, 3);
         LightKick.SetXY(0, -8);
         AddChild(LightKick);
         LightKick.visible = false;
@@ -64,7 +64,7 @@ class Orochi : Character
         UltimateAttack = new AttackClass("Assets/Charecter 1/C1 Ultimate.png", 10, 1, 9, 5, 6);
         UltimateAttack.SetAttackProperties(false, true);
         UltimateAttack.SetOrigin(UltimateAttack.width / 2, UltimateAttack.height / 2);
-        UltimateAttack.SetCycle(0, 10, 4);
+        UltimateAttack.SetCycle(0, 10, 5);
         UltimateAttack.SetXY(100, -200);
         AddChild(UltimateAttack);
         UltimateAttack.visible = false;
@@ -72,7 +72,7 @@ class Orochi : Character
         CrouchAttack = new AttackClass("Assets/Charecter 1/C1 CrouchAttack.png", 5, 1, 5, 2, 8);
         CrouchAttack.SetAttackProperties(false, false);
         CrouchAttack.SetOrigin(CrouchAttack.width / 2, CrouchAttack.height / 2);
-        CrouchAttack.SetCycle(0, 5, 5);
+        CrouchAttack.SetCycle(0, 5, 3);
         CrouchAttack.SetXY(0, -8);
         AddChild(CrouchAttack);
         CrouchAttack.visible = false;
@@ -101,28 +101,28 @@ class Orochi : Character
 
         Crouch = new AnimationSprite("Assets/Charecter 1/C1 Crouch.png", 2, 1, 2, false, false);
         Crouch.SetOrigin(Crouch.width / 2, Crouch.height / 2);
-        Crouch.SetCycle(0, 2, 16);
+        Crouch.SetCycle(0, 2, 10);
         Crouch.SetXY(0, -8);
         AddChild(Crouch);
         Crouch.visible = false;
 
         Hit = new AnimationSprite("Assets/Charecter 1/C1 Hit.png", 3, 1, 3, false, false);
         Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 15);
+        Hit.SetCycle(0, 3, 10);
         Hit.SetXY(0, -8);
         AddChild(Hit);
         Hit.visible = false;
 
         Block = new AnimationSprite("Assets/Charecter 1/C1 Block.png", 3, 1, 3, false, false);
         Block.SetOrigin(Block.width / 2, Block.height / 2);
-        Block.SetCycle(0, 3, 6);
+        Block.SetCycle(0, 2, 4);
         Block.SetXY(0, -8);
         AddChild(Block);
         Block.visible = false;
 
         Walk = new AnimationSprite("Assets/Charecter 1/C1 Walk.png", 4, 1, 4, false, false);
         Walk.SetOrigin(Walk.width / 2, Walk.height / 2);
-        Walk.SetCycle(0, 4, 6);
+        Walk.SetCycle(0, 4, 4);
         Walk.SetXY(0, -8);
         AddChild(Walk);
         Walk.visible = false;
@@ -163,7 +163,7 @@ class Orochi : Character
         LightPunch.ResetAttack();
         SetCurrentAttack(LightPunch);
         SetHurBox(50, -30, 2f, 1f);
-        SetAttackDmg(20, 4);
+        SetAttackDmg(20, 2);
         CurrentAttack = LightPunch;
         attacking = true;
     }
@@ -172,7 +172,7 @@ class Orochi : Character
         HardPunch.ResetAttack();
         SetCurrentAttack(HardPunch);
         SetHurBox(60, -35, 2f, 1f);
-        SetAttackDmg(30, 5);
+        SetAttackDmg(30, 3);
         CurrentAttack = HardPunch;
         attacking = true;
     }
@@ -182,7 +182,7 @@ class Orochi : Character
         SetCurrentAttack(LightKick);
         SetHurBox(40, -40, 2f, 1f);
         hurtBox.rotation = -40;
-        SetAttackDmg(10, 3);
+        SetAttackDmg(10, 2);
         CurrentAttack = LightKick;
         attacking = true;
     }
@@ -193,7 +193,7 @@ class Orochi : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(70, -50, 2f, 1f);
         hurtBox.rotation = -40;
-        SetAttackDmg(10, 2, 7);
+        SetAttackDmg(10, 5, 7);
         attacking = true;
 
     }
@@ -224,7 +224,7 @@ class Orochi : Character
         CurrentAttack.ResetHit(3);
         SetCurrentAttack(CurrentAttack);
         SetHurBox(60, -50, 3f, 6f);
-        SetAttackDmg(60, 0, 14);
+        SetAttackDmg(60, 2, 20);
         attacking = true;
         specialSound.Play(false, 0, 0.7f);
     }
@@ -235,7 +235,7 @@ class Orochi : Character
         CurrentAttack.ResetHit(6);
         SetCurrentAttack(CurrentAttack);
         SetHurBox(180, 0, 5f, 5f);
-        SetAttackDmg(25, 20, 10);
+        SetAttackDmg(25, 20, 15);
         SetPlayerColl(20, 20, 3f, 4f);
         attacking = true;
         ultSound.Play(false, 0, 0.7f);
@@ -275,11 +275,11 @@ class Orochi : Character
     protected override void SpecialAttackInputs()
     {
 
-        if (grounded && DoubleQuarterCircleForward() && (LastInput() == 10 || LastInput() == 9) && currentPower >= MaxPower)
+        if (grounded && DoubleQuarterCircleForward() && (ValidInput(9) || ValidInput(10)) && currentPower >= MaxPower)
         {
             UltAttack();
         }
-        else if (grounded && ZMotionForward() && (LastInput() == 10 || LastInput() == 9))
+        else if (grounded && ZMotionForward() && (ValidInput(9) || ValidInput(10)))
         {
             SPAttack();
         }
@@ -326,14 +326,14 @@ class Orochi : Character
                 CurrentAttack.ResetHit(5);
                 SetHurBox(70, -100, 2f, 8f);
                 SetPlayerColl(40, -100, 2f, 5.5f);
-                SetAttackDmg(10, 0, 10);
+                SetAttackDmg(10, 2, 15);
             }
             if (CurrentAttack.currentFrame == 6)
             {
                 CurrentAttack.ResetHit(7);
                 SetHurBox(70, -250, 4f, 4f);
                 SetPlayerColl(40, -180, 2f, 5f);
-                SetAttackDmg(10, 8, 6);
+                SetAttackDmg(10, 8, 10);
             }
         }
 
@@ -341,9 +341,9 @@ class Orochi : Character
             if (CurrentAttack.currentFrame == 2)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 3;
+                    vx = Horizontalspeed * 2;
                 else
-                    vx = -Horizontalspeed * 3;
+                    vx = -Horizontalspeed * 2;
             }
 
         if (CurrentAttack == UltimateAttack)

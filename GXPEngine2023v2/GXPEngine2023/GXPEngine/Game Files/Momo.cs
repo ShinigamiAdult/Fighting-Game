@@ -24,7 +24,7 @@ class Momo : Character
         LightPunch = new AttackClass("Assets/Charecter 2/C2 LightPunch.png", 5, 1, 5, 2, 6);
         LightPunch.SetAttackProperties(false, false);
         LightPunch.SetOrigin(LightPunch.width / 2, LightPunch.height / 2);
-        LightPunch.SetCycle(0, 5, 5);
+        LightPunch.SetCycle(0, 5, 4);
         LightPunch.SetXY(0, -8);
         AddChild(LightPunch);
         LightPunch.visible = false;
@@ -32,7 +32,7 @@ class Momo : Character
         HardPunch = new AttackClass("Assets/Charecter 2/C2 HardPunch.png", 5, 1, 5, 3, 15);
         HardPunch.SetAttackProperties(false, false);
         HardPunch.SetOrigin(HardPunch.width / 2, HardPunch.height / 2);
-        HardPunch.SetCycle(0, 6, 5);
+        HardPunch.SetCycle(0, 6, 3);
         HardPunch.SetXY(0, -8);
         AddChild(HardPunch);
         HardPunch.visible = false;
@@ -40,7 +40,7 @@ class Momo : Character
         LightKick = new AttackClass("Assets/Charecter 2/C2 LightKick.png", 6, 1, 5, 3, 6);
         LightKick.SetAttackProperties(false, false);
         LightKick.SetOrigin(LightKick.width / 2, LightKick.height / 2);
-        LightKick.SetCycle(0, 6, 5);
+        LightKick.SetCycle(0, 6, 3);
         LightKick.SetXY(0, -8);
         AddChild(LightKick);
         LightKick.visible = false;
@@ -58,7 +58,7 @@ class Momo : Character
         SpecialAttack = new AttackClass("Assets/Charecter 2/C2 Special.png", 11, 1, 11, 4, 5);
         SpecialAttack.SetAttackProperties(true, true);
         SpecialAttack.SetOrigin(SpecialAttack.width / 2, SpecialAttack.height / 2);
-        SpecialAttack.SetCycle(0, 11, 2);
+        SpecialAttack.SetCycle(0, 11, 5);
         SpecialAttack.SetXY(100, -200);
         AddChild(SpecialAttack);
         SpecialAttack.visible = false;
@@ -66,7 +66,7 @@ class Momo : Character
         UltimateAttack = new AttackClass("Assets/Charecter 2/C2 Ultimate.png", 26, 1, 9, 26, 10);
         UltimateAttack.SetAttackProperties(true, true);
         UltimateAttack.SetOrigin(UltimateAttack.width / 2, UltimateAttack.height / 2);
-        UltimateAttack.SetCycle(0, 26, 4);
+        UltimateAttack.SetCycle(0, 26, 5);
         UltimateAttack.SetXY(100, -200);
         AddChild(UltimateAttack);
         UltimateAttack.visible = false;
@@ -74,7 +74,7 @@ class Momo : Character
         CrouchAttack = new AttackClass("Assets/Charecter 2/C2 CrouchAttack.png", 5, 1, 5, 2, 6);
         CrouchAttack.SetAttackProperties(false, false);
         CrouchAttack.SetOrigin(CrouchAttack.width / 2, CrouchAttack.height / 2);
-        CrouchAttack.SetCycle(0, 5, 5);
+        CrouchAttack.SetCycle(0, 5, 3);
         CrouchAttack.SetXY(0, -8);
         AddChild(CrouchAttack);
         CrouchAttack.visible = false;
@@ -111,14 +111,14 @@ class Momo : Character
 
         Hit = new AnimationSprite("Assets/Charecter 2/C2 Hit.png", 3, 1, 3, false, false);
         Hit.SetOrigin(Hit.width / 2, Hit.height / 2);
-        Hit.SetCycle(0, 3, 15);
+        Hit.SetCycle(0, 3, 10);
         Hit.SetXY(0, -8);
         AddChild(Hit);
         Hit.visible = false;
 
         Block = new AnimationSprite("Assets/Charecter 2/C2 Block.png", 2, 1, 2, false, false);
         Block.SetOrigin(Block.width / 2, Block.height / 2);
-        Block.SetCycle(0, 2, 10);
+        Block.SetCycle(0, 2, 4);
         Block.SetXY(0, -8);
         AddChild(Block);
         Block.visible = false;
@@ -166,7 +166,7 @@ class Momo : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(70, -15, 2.5f, 1f);
         hurtBox.rotation = -25;
-        SetAttackDmg(30, 2, 0);
+        SetAttackDmg(30, 3, 0);
         attacking = true;
     }
     void HPAttack()
@@ -175,7 +175,7 @@ class Momo : Character
         CurrentAttack.ResetAttack();
         SetCurrentAttack(CurrentAttack);
         SetHurBox(50, 0, 3f, 6f);
-        SetAttackDmg(50,3,0);
+        SetAttackDmg(50,8,7);
 
         attacking = true;
     }
@@ -226,7 +226,7 @@ class Momo : Character
         CurrentAttack.ResetHit(3);
         SetCurrentAttack(CurrentAttack);
         SetHurBox(180, -20, 5f, 5f);
-        SetAttackDmg(15, 3, 3);
+        SetAttackDmg(15, 5, 6);
         attacking = true;
     }
     void UltAttack()
@@ -236,7 +236,7 @@ class Momo : Character
         CurrentAttack.ResetHit(4);
         SetCurrentAttack(CurrentAttack);
         SetHurBox(100, 0, 4f, 6f);
-        SetAttackDmg(30, 1, 15);
+        SetAttackDmg(80, 5, 25);
         SetPlayerColl(30, 20, 2f, 4f);
         playerColl.rotation = 50;
         attacking = true;
@@ -276,10 +276,12 @@ class Momo : Character
     }
     protected override void SpecialAttackInputs()
     {
-        if (grounded && DoubleQuarterCircleBackwards() && (LastInput() == 11 || LastInput() == 12) && currentPower >= MaxPower)
+        if (grounded && DoubleQuarterCircleBackwards() && (ValidInput(11) || ValidInput(12)) && currentPower >= MaxPower)
             UltAttack();
-        else if (grounded && DoubleDown() && (LastInput() == 10 || LastInput() == 9))
+        else if (grounded && DoubleDown() && (ValidInput(9) || ValidInput(10)))
             SPAttack();
+        if (Input.GetKeyDown(Key.T))
+            UltAttack();
     }
     protected override void AttackAddition()
     {
@@ -295,9 +297,9 @@ class Momo : Character
             if (CurrentAttack.currentFrame == 1 || CurrentAttack.currentFrame == 2)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 2;
+                    vx = Horizontalspeed * 1;
                 else
-                    vx = -Horizontalspeed * 2;
+                    vx = -Horizontalspeed * 1;
             }
         if (CurrentAttack == LightKick)
         {
@@ -324,9 +326,9 @@ class Momo : Character
             if (CurrentAttack.currentFrame == 1 && grounded)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 3;
+                    vx = Horizontalspeed * 1;
                 else
-                    vx = -Horizontalspeed * 3;
+                    vx = -Horizontalspeed * 1;
             }
             if (CurrentAttack.currentFrame == 3)
                 CurrentAttack.ResetHit(4);
@@ -341,19 +343,19 @@ class Momo : Character
         {
             if (CurrentAttack.currentFrame == 7)
             {
-                CurrentAttack.ResetHit(11);
+                CurrentAttack.ResetHit(10);
                 SetHurBox(160, -320, 3f, 6f);
                 hurtBox.rotation = 50;
-                SetAttackDmg(10, 2, -25);
-                SetPlayerColl(150, -340, 3f, 5f);
+                SetAttackDmg(80, 6, -25);
+                SetPlayerColl(0, 0, 0f, 0f);
                 playerColl.rotation = 50;
             }
             if (CurrentAttack.currentFrame == 13)
             {
                 CurrentAttack.ResetHit(14);
                 SetHurBox(260, -40, 4f, 4f);
-                SetAttackDmg(10, 5, 5);
-                SetPlayerColl(240, 0, 3f, 4.5f);
+                SetAttackDmg(30, 10, 10);
+                SetPlayerColl(0, 0, 0f, 0f);
             }
             if (CurrentAttack.currentFrame == 15)
             {
