@@ -857,9 +857,8 @@ public class Character : AnimationSprite
     //if knock causes bug you can implement the knock from here
     protected void GotHit()
     {
-        attacking = false;
         CurrentAttack.ResetAttack();
-        if (Blocking() && !hit && !knockdown && grounded)
+        if (Blocking() && !hit && !knockdown && grounded && !attacking)
         {
             block = true;
             Block.currentFrame = 0;
@@ -916,6 +915,7 @@ public class Character : AnimationSprite
             int i = Utils.Random(0, 4);
             sHit[i].Play(false, 0, 0.4f);
         }
+        attacking = false;
         if (TakeDamage != null)
             TakeDamage(currentHealth);
         if (BarFill != null)
