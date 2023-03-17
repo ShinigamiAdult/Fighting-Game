@@ -170,6 +170,17 @@ public class Character : AnimationSprite
                     SetVisible(CurrentAttack);
                     if (CurrentAttack.FrameValidation())
                         AttackCollision(CurrentAttack);
+                    if (!grounded)
+                    {
+                        if (jumpLeft)
+                        {
+                            vx = -Horizontalspeed;
+                        }
+                        else if (jumpRight)
+                        {
+                            vx = Horizontalspeed;
+                        }
+                    }
                 }
                 break;
             case State.Netural:
@@ -541,7 +552,7 @@ public class Character : AnimationSprite
         PlayerInput c = Inputs.FindLast(x => x.GetKey() == a);
         if (c != null)
         {
-            if (c.GetTime() > 25)
+            if (c.GetTime() < 10)
             {
                 return true;
             }
@@ -557,21 +568,21 @@ public class Character : AnimationSprite
     }
     protected int LastInput()
     {
-        if (Inputs[Inputs.Count - 1].GetTime() > 20)
+        if (Inputs[Inputs.Count - 1].GetTime() < 10)
             return Inputs[Inputs.Count - 1].GetKey();
         else
             return 0;
     }
     protected int BeforeLastInput()
     {
-        if (Inputs[Inputs.Count - 2].GetTime() > 20)
+        if (Inputs[Inputs.Count - 2].GetTime() < 15)
             return Inputs[Inputs.Count - 2].GetKey();
         else
             return 0;
     }
     protected int ThirdLastInput()
     {
-        if (Inputs[Inputs.Count - 3].GetTime() > 20)
+        if (Inputs[Inputs.Count - 3].GetTime() < 20)
             return Inputs[Inputs.Count - 3].GetKey();
         else
             return 0;
@@ -588,11 +599,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 30) || down)
             {
-                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() > 0) || downside)
+                if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() < 30) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > 0))
+                    if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() < 30))
                     {
                         side = true;
                         break;
@@ -615,13 +626,13 @@ public class Character : AnimationSprite
         bool side2 = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 50) || down)
             {
-                if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > 0) || side)
+                if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() < 50) || side)
                 {
-                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down2)
+                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 50) || down2)
                     {
-                        if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > 0))
+                        if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() < 50))
                         {
                             side2 = true;
                             break;
@@ -645,11 +656,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 30) || down)
             {
-                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() > 0) || downside)
+                if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() < 30) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > 0))
+                    if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() < 30))
                     {
                         side = true;
                         break;
@@ -672,13 +683,13 @@ public class Character : AnimationSprite
         bool side2 = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 50) || down)
             {
-                if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > 0) || side)
+                if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() < 50) || side)
                 {
-                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down2)
+                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 50) || down2)
                     {
-                        if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > 0))
+                        if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() < 50))
                         {
                             side2 = true;
                             break;
@@ -702,11 +713,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() > 0) || side)
+            if ((Inputs[i].GetKey() == 1 && Inputs[i].GetTime() < 30) || side)
             {
-                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 30) || down)
                 {
-                    if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() > 0) || downside)
+                    if ((Inputs[i].GetKey() == 8 && Inputs[i].GetTime() < 30) || downside)
                     {
                         downside = true;
                         break;
@@ -730,11 +741,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() > 0) || side)
+            if ((Inputs[i].GetKey() == 5 && Inputs[i].GetTime() < 30) || side)
             {
-                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+                if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 30) || down)
                 {
-                    if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() > 0) || downside)
+                    if ((Inputs[i].GetKey() == 6 && Inputs[i].GetTime() < 30) || downside)
                     {
                         downside = true;
                         break;
@@ -833,11 +844,11 @@ public class Character : AnimationSprite
         bool side = false;
         for (int i = 0; i < Inputs.Count; i++)
         {
-            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || down)
+            if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 20) || down)
             {
-                if ((Inputs[i].GetKey() == 0 && Inputs[i].GetTime() > 0) || downside)
+                if ((Inputs[i].GetKey() == 0 && Inputs[i].GetTime() < 20) || downside)
                 {
-                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() > 0) || side)
+                    if ((Inputs[i].GetKey() == 7 && Inputs[i].GetTime() < 20) || side)
                     {
                         side = true;
                         break;
@@ -857,7 +868,12 @@ public class Character : AnimationSprite
     //if knock causes bug you can implement the knock from here
     protected void GotHit()
     {
-        CurrentAttack.ResetAttack();
+        if (attacking)
+        {
+            CurrentAttack.ResetAttack();
+            if (CurrentAttack == UltimateAttack)
+                TriggerSuper(false);
+        }
         if (Blocking() && !hit && !knockdown && grounded && !attacking)
         {
             block = true;

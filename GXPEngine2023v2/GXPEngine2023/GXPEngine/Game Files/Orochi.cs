@@ -15,7 +15,7 @@ class Orochi : Character
     {
         MaxHealth = 1100;
         currentHealth = MaxHealth;
-        MaxPower = 600;
+        MaxPower = 500;
         currentPower = 0;
     }
     protected override void Initalize()
@@ -163,7 +163,7 @@ class Orochi : Character
         LightPunch.ResetAttack();
         SetCurrentAttack(LightPunch);
         SetHurBox(50, -30, 2f, 1f);
-        SetAttackDmg(20, 2);
+        SetAttackDmg(40, 3);
         CurrentAttack = LightPunch;
         attacking = true;
     }
@@ -172,7 +172,7 @@ class Orochi : Character
         HardPunch.ResetAttack();
         SetCurrentAttack(HardPunch);
         SetHurBox(60, -35, 2f, 1f);
-        SetAttackDmg(30, 3);
+        SetAttackDmg(70, 4);
         CurrentAttack = HardPunch;
         attacking = true;
     }
@@ -182,7 +182,7 @@ class Orochi : Character
         SetCurrentAttack(LightKick);
         SetHurBox(40, -40, 2f, 1f);
         hurtBox.rotation = -40;
-        SetAttackDmg(10, 2);
+        SetAttackDmg(40, 3);
         CurrentAttack = LightKick;
         attacking = true;
     }
@@ -193,7 +193,7 @@ class Orochi : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(70, -50, 2f, 1f);
         hurtBox.rotation = -40;
-        SetAttackDmg(10, 5, 7);
+        SetAttackDmg(100, 7, 7);
         attacking = true;
 
     }
@@ -202,7 +202,7 @@ class Orochi : Character
         CrouchAttack.ResetAttack();
         SetCurrentAttack(CrouchAttack);
         SetHurBox(50, 50, 1.5f, 1f);
-        SetAttackDmg(10, 3);
+        SetAttackDmg(50, 4);
         CurrentAttack = CrouchAttack;
         attacking = true;
     }
@@ -225,6 +225,7 @@ class Orochi : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(60, -50, 3f, 6f);
         SetAttackDmg(60, 2, 20);
+        SetPlayerColl(0, 0, 0, 0);
         attacking = true;
         specialSound.Play(false, 0, 0.7f);
     }
@@ -235,8 +236,8 @@ class Orochi : Character
         CurrentAttack.ResetHit(6);
         SetCurrentAttack(CurrentAttack);
         SetHurBox(180, 0, 5f, 5f);
-        SetAttackDmg(25, 20, 15);
-        SetPlayerColl(20, 20, 3f, 4f);
+        SetAttackDmg(30, 20, 15);
+        SetPlayerColl(0, 0, 0f, 0f);
         attacking = true;
         ultSound.Play(false, 0, 0.7f);
         ResetSpBar();
@@ -279,7 +280,7 @@ class Orochi : Character
         {
             UltAttack();
         }
-        else if (grounded && ZMotionForward() && (ValidInput(9) || ValidInput(10)))
+        else if (grounded && ZMotionForward() && (ValidInput(9) || ValidInput(10)) && (CurrentAttack != SpecialAttack || !attacking))
         {
             SPAttack();
         }
@@ -290,18 +291,18 @@ class Orochi : Character
             if (CurrentAttack.currentFrame == 1 && grounded)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed;
+                    vx = Horizontalspeed *2;
                 else
-                    vx = -Horizontalspeed;
+                    vx = -Horizontalspeed *2;
             }
         if (CurrentAttack == HardKick)
         {
-            if (CurrentAttack.currentFrame == 4 && grounded)
+            if (CurrentAttack.currentFrame >= 1 && CurrentAttack.currentFrame <= 4 && grounded)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 3;
+                    vx = Horizontalspeed * 2;
                 else
-                    vx = -Horizontalspeed * 3;
+                    vx = -Horizontalspeed * 2;
             }
             if (CurrentAttack.currentFrame == 9 && grounded)
             {
@@ -325,15 +326,13 @@ class Orochi : Character
             {
                 CurrentAttack.ResetHit(5);
                 SetHurBox(70, -100, 2f, 8f);
-                SetPlayerColl(40, -100, 2f, 5.5f);
-                SetAttackDmg(10, 2, 15);
+                SetAttackDmg(80, 2, 15);
             }
             if (CurrentAttack.currentFrame == 6)
             {
                 CurrentAttack.ResetHit(7);
                 SetHurBox(70, -250, 4f, 4f);
-                SetPlayerColl(40, -180, 2f, 5f);
-                SetAttackDmg(10, 8, 10);
+                SetAttackDmg(100, 8, 10);
             }
         }
 
@@ -341,9 +340,9 @@ class Orochi : Character
             if (CurrentAttack.currentFrame == 2)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 2;
+                    vx = Horizontalspeed * 3;
                 else
-                    vx = -Horizontalspeed * 2;
+                    vx = -Horizontalspeed * 3;
             }
 
         if (CurrentAttack == UltimateAttack)
@@ -354,14 +353,10 @@ class Orochi : Character
             }
             if (CurrentAttack.currentFrame == 6)
             {
+                SetPlayerColl(20, 20, 3f, 4f);
                 SetHurBox(200, -20, 8f, 6f);
                 CurrentAttack.ResetHit(6);
             }
-            /*if(CurrentAttack.currentFrame == 7)
-            {
-                SetHurBox(230, -20, 10f, 7f);
-                CurrentAttack.ResetHit(7);
-            }*/
         }
     }
 }

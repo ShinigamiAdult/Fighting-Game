@@ -166,7 +166,7 @@ class Momo : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(70, -15, 2.5f, 1f);
         hurtBox.rotation = -25;
-        SetAttackDmg(30, 3, 0);
+        SetAttackDmg(30, 4);
         attacking = true;
     }
     void HPAttack()
@@ -187,7 +187,7 @@ class Momo : Character
         SetHurBox(30, -20, 2f, 1f);
         SetPlayerColl(-50, 0);
         hurtBox.rotation = -40;
-        SetAttackDmg(40, 1);
+        SetAttackDmg(40, 2);
         attacking = true;
     }
     void HKAttack()
@@ -196,7 +196,7 @@ class Momo : Character
         CurrentAttack.ResetAttack();
         SetCurrentAttack(CurrentAttack);
         SetHurBox(30, 0, 3.5f, 2f);
-        SetAttackDmg(60, 5, 0);
+        SetAttackDmg(60, 5);
         SetPlayerColl(-30, 0,5f,2f);
         attacking = true;
 
@@ -206,7 +206,7 @@ class Momo : Character
         CrouchAttack.ResetAttack();
         SetCurrentAttack(CrouchAttack);
         SetHurBox(70, 50, 1.5f, 1f);
-        SetAttackDmg(40, 2);
+        SetAttackDmg(40, 3);
         CurrentAttack = CrouchAttack;
         attacking = true;
     }
@@ -237,7 +237,7 @@ class Momo : Character
         SetCurrentAttack(CurrentAttack);
         SetHurBox(100, 0, 4f, 6f);
         SetAttackDmg(80, 5, 25);
-        SetPlayerColl(30, 20, 2f, 4f);
+        SetPlayerColl(0, 0, 0f, 0f);
         playerColl.rotation = 50;
         attacking = true;
         ResetSpBar();
@@ -278,10 +278,8 @@ class Momo : Character
     {
         if (grounded && DoubleQuarterCircleBackwards() && (ValidInput(11) || ValidInput(12)) && currentPower >= MaxPower)
             UltAttack();
-        else if (grounded && DoubleDown() && (ValidInput(9) || ValidInput(10)))
+        else if (grounded && DoubleDown() && (ValidInput(9) || ValidInput(10)) && (CurrentAttack!=SpecialAttack || !attacking))
             SPAttack();
-        if (Input.GetKeyDown(Key.T))
-            UltAttack();
     }
     protected override void AttackAddition()
     {
@@ -289,31 +287,21 @@ class Momo : Character
             if(CurrentAttack.currentFrame == 1)
             {
                 if (scaleX > 0)
-                    vx = Horizontalspeed * 1;
+                    vx = Horizontalspeed * 2;
                 else
-                    vx = -Horizontalspeed * 1;
+                    vx = -Horizontalspeed * 2;
             }
         if (CurrentAttack == HardPunch)
             if (CurrentAttack.currentFrame == 1 || CurrentAttack.currentFrame == 2)
-            {
-                if (scaleX > 0)
-                    vx = Horizontalspeed * 1;
-                else
-                    vx = -Horizontalspeed * 1;
-            }
-        if (CurrentAttack == LightKick)
-        {
-            if (CurrentAttack.currentFrame == 2)
             {
                 if (scaleX > 0)
                     vx = Horizontalspeed * 2;
                 else
                     vx = -Horizontalspeed * 2;
             }
-        }
         if (CurrentAttack == HardKick)
         {
-            if ((CurrentAttack.currentFrame == 3 || CurrentAttack.currentFrame == 4) && grounded)
+            if ((CurrentAttack.currentFrame >= 1 && CurrentAttack.currentFrame <= 3) && grounded)
             {
                 if (scaleX > 0)
                     vx = Horizontalspeed * 2;
@@ -347,7 +335,6 @@ class Momo : Character
                 SetHurBox(160, -320, 3f, 6f);
                 hurtBox.rotation = 50;
                 SetAttackDmg(80, 6, -25);
-                SetPlayerColl(0, 0, 0f, 0f);
                 playerColl.rotation = 50;
             }
             if (CurrentAttack.currentFrame == 13)
@@ -355,7 +342,6 @@ class Momo : Character
                 CurrentAttack.ResetHit(14);
                 SetHurBox(260, -40, 4f, 4f);
                 SetAttackDmg(30, 10, 10);
-                SetPlayerColl(0, 0, 0f, 0f);
             }
             if (CurrentAttack.currentFrame == 15)
             {
